@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          File Transfer vs Message Transfer and Framing Model - Yanchao&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://ymurong.com/2019/07/16/Model-file-transfer-vs-message-transfer-and-framing-model/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yanchao&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/about.html">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Image to hack wechat -->
+<!-- <img src="https://ymurong.com/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                    </div>
+                    <h1>File Transfer vs Message Transfer and Framing Model</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Yanchao MURONG on
+                        2019-07-16
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>In the last post, I have illustrated a simple way to address sticky
+&amp; lost package during socket transfer, which works for small
+messages. In this post, I would like to draw out attention to File
+transfer, which shares a lot of things in common with normal message
+transfer but also has its own particularities which could lead to new
+problems.</p>
+</blockquote>
+<h2
+id="difference-between-file-transfer-and-message-transfer">Difference
+between File Transfer and Message Transfer</h2>
+<ul>
+<li>The data size of a file could be far larger than normal message
+...... Well, one is enough for us to be preoccupied since it is indeed
+the most important difference that cannot be underestimated if we come
+to see its problems.</li>
+</ul>
+<ol type="1">
+<li>As there is great amount of data to transfer, if we transfer them
+all at once (let's say it takes 10 minutes to transfer all), the next
+message cannot be sent until 10 minutes afterwards as the socket has
+been fully occupied by this big file</li>
+<li>If we get frustrated and want to cancel the transfer, it will become
+worse as the server is waiting for the whole file being completely
+transferred, and hence blocked the whole socket transfer.</li>
+<li>Even if we only have one big file to transfer, with the solution
+introduced in my last post, there will be a big amount of buffer being
+used, which could obviously leads to out of memory if we are talking
+about many gegabytes files.<br />
+</li>
+<li>If during the transfer, the network crash, then we dont know at all
+which part has been trasferred and which part has not been transferred,
+which forces us to retransfer the whole file again.</li>
+</ol>
+<p>How could we address all of them in an elegant way? Framing come to
+rescue.</p>
+<h2 id="what-is-frame">What is Frame</h2>
+<p>A frame is a simple container for a single network packet. In our
+case, it could simply be a fix sized container that could transfer a
+part of the whole file or message with supplementary informations for us
+to be able to recombine them during reception.</p>
+<p>Imagine a following frame data structure:</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;Frame: <span class="built_in">capacity</span>(<span class="number">64</span>KB)&gt;&lt;&#123;</span><br><span class="line">  Length: <span class="number">2</span> Bytes <span class="selector-attr">[0~65535]</span>, <span class="comment">// size of payload</span></span><br><span class="line">  Type: <span class="number">1</span> Byte <span class="selector-attr">[-128~127]</span>,   <span class="comment">// type id</span></span><br><span class="line">  Flags: <span class="number">1</span> Byte <span class="selector-attr">[00000000]</span>,  <span class="comment">// encryption id</span></span><br><span class="line">  Identifier: <span class="number">1</span> Byte<span class="selector-attr">[1~255]</span>, <span class="comment">// parent packet id</span></span><br><span class="line">  Other: <span class="number">1</span> Byte <span class="selector-attr">[00000000]</span>,  <span class="comment">// other things</span></span><br><span class="line">  Payload: X Bytes <span class="selector-attr">[X,X,X...]</span><span class="comment">// payload data </span></span><br><span class="line">&#125;&gt;</span><br></pre></td></tr></table></figure>
+<p>In this data structure, we have a fixed header part which represents
+6 bytes.</p>
+<p>The Type attributes could be - TYPE_PACKET_HEADER It could be used as
+the first frame for a big packet (file or message) to send, transporting
+the information of the whole packet for later combination usage.
+Typically, we could have packet length [5 bytes] and packet type[one
+byte]. It is interesting to mention that through the type of packet, we
+could then determine whether we are receving a file or a message.</p>
+<ul>
+<li>TYPE_PACKET_ENTITY This will be the entity frame containing frame
+header part and the frame entity part containing part of the binary data
+(file or message).</li>
+<li>TYPE_COMMAND_SEND_CANCEL Special type of frame which indicates that
+a packet transfer has been canceled.</li>
+<li>...</li>
+</ul>
+<h2 id="file-transfer-packet-and-framing">File Transfer Packet and
+Framing</h2>
+<h5 id="sending-frame-logic">Sending Frame logic</h5>
+<p>Whenever we want to send a file, we could define a FileSendPacket
+like the following. Note that we have used InputStream to enable
+streaming to prevent unnecessary buffer.</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">public <span class="class"><span class="keyword">class</span> <span class="title">FileSendPacket</span> <span class="keyword">extends</span> <span class="title">SendPacket&lt;FileInputStream&gt;</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">File</span> file;</span><br><span class="line"></span><br><span class="line">    public <span class="type">FileSendPacket</span>(<span class="type">File</span> file) &#123;</span><br><span class="line">        <span class="keyword">this</span>.file = file;</span><br><span class="line">        <span class="keyword">this</span>.length = file.length();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    public byte <span class="class"><span class="keyword">type</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">TYPE_STREAM_FILE</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * use file to build readable FileInputStream</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * @return file readable stream</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="type">FileInputStream</span> createStream() &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="type">FileInputStream</span>(file);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (<span class="type">FileNotFoundException</span> e) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>With the FileSendPacket, we could firstly build a
+SendHeaderFrame.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">requestTakePacket</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (<span class="built_in">this</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (nodeSize &gt;= <span class="number">1</span>) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="type">SendPacket</span> <span class="variable">packet</span> <span class="operator">=</span> provider.takePacket();</span><br><span class="line">        <span class="keyword">if</span> (packet != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="comment">// am identifier will be generated and put in each frame header at the 5th byte position</span></span><br><span class="line">            <span class="type">short</span> <span class="variable">identifier</span> <span class="operator">=</span> generateIdentifier();</span><br><span class="line">            <span class="type">SendHeaderFrame</span> <span class="variable">frame</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SendHeaderFrame</span>(identifier, packet);</span><br><span class="line">            <span class="comment">// append the first sendHeaderFrame</span></span><br><span class="line">            appendNewFrame(frame);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">synchronized</span> (<span class="built_in">this</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> nodeSize != <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SendHeaderFrame</span> <span class="keyword">extends</span> <span class="title class_">AbsSendPacketFrame</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">PACKET_HEADER_FRAME_MIN_LENGTH</span> <span class="operator">=</span> <span class="number">6</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">byte</span>[] body;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">SendHeaderFrame</span><span class="params">(<span class="type">short</span> identifier, SendPacket packet)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(PACKET_HEADER_FRAME_MIN_LENGTH,</span><br><span class="line">                Frame.TYPE_PACKET_HEADER,</span><br><span class="line">                Frame.FLAG_NONE,</span><br><span class="line">                identifier,</span><br><span class="line">                packet);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">final</span> <span class="type">long</span> <span class="variable">packetLength</span> <span class="operator">=</span> packet.length();</span><br><span class="line">        <span class="keyword">final</span> <span class="type">byte</span> <span class="variable">packetType</span> <span class="operator">=</span> packet.type();</span><br><span class="line">        <span class="keyword">final</span> <span class="type">byte</span>[] packetHeaderInfo = packet.headerInfo();</span><br><span class="line"></span><br><span class="line">        body = <span class="keyword">new</span> <span class="title class_">byte</span>[bodyRemaining];</span><br><span class="line"></span><br><span class="line">        body[<span class="number">0</span>] = (<span class="type">byte</span>) (packetLength &gt;&gt; <span class="number">32</span>);</span><br><span class="line">        body[<span class="number">1</span>] = (<span class="type">byte</span>) (packetLength &gt;&gt; <span class="number">24</span>);</span><br><span class="line">        body[<span class="number">2</span>] = (<span class="type">byte</span>) (packetLength &gt;&gt; <span class="number">16</span>);</span><br><span class="line">        body[<span class="number">3</span>] = (<span class="type">byte</span>) (packetLength &gt;&gt; <span class="number">8</span>);</span><br><span class="line">        body[<span class="number">4</span>] = (<span class="type">byte</span>) (packetLength);</span><br><span class="line"></span><br><span class="line">        body[<span class="number">5</span>] = packetType;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (packetHeaderInfo != <span class="literal">null</span>) &#123;</span><br><span class="line">            System.arraycopy(packetHeaderInfo, <span class="number">0</span>, body, PACKET_HEADER_FRAME_MIN_LENGTH, packetHeaderInfo.length);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="type">int</span> <span class="title function_">consumeBody</span><span class="params">(IoArgs args)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> bodyRemaining;</span><br><span class="line">        <span class="type">int</span> <span class="variable">offset</span> <span class="operator">=</span> body.length - count;</span><br><span class="line">        <span class="keyword">return</span> args.readFrom(body, offset, count);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Frame <span class="title function_">buildNextFrame</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">InputStream</span> <span class="variable">stream</span> <span class="operator">=</span> packet.open();</span><br><span class="line">        <span class="type">ReadableByteChannel</span> <span class="variable">channel</span> <span class="operator">=</span> Channels.newChannel(stream);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">SendEntityFrame</span>(getBodyIdentifier(), packet.length(), channel, packet);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>Then we could write sendHeaderFrame to a intermediate buffer
+IoArgs.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> IoArgs <span class="title function_">fillData</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="type">Frame</span> <span class="variable">currentFrame</span> <span class="operator">=</span> getCurrentFrame();</span><br><span class="line">    <span class="keyword">if</span> (currentFrame == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// if sendHeaderFrame, then put its header and body to args</span></span><br><span class="line">        <span class="comment">// if sendEntityFrame, then put its header and body from inputstream to args</span></span><br><span class="line">        <span class="keyword">if</span> (currentFrame.handle(args)) &#123;</span><br><span class="line">            <span class="comment">// currentFrame has been consumed</span></span><br><span class="line">            <span class="type">Frame</span> <span class="variable">nextFrame</span> <span class="operator">=</span> currentFrame.nextFrame(); <span class="comment">// if headerFrame =&gt; nextFrame is entityFrame if not then nextFrame is still entityFrame</span></span><br><span class="line">            <span class="keyword">if</span> (nextFrame != <span class="literal">null</span>) &#123;</span><br><span class="line">                appendNewFrame(nextFrame);</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (currentFrame <span class="keyword">instanceof</span> SendEntityFrame) &#123;</span><br><span class="line">                <span class="comment">// the last sendEntityFrame</span></span><br><span class="line">                provider.completedPacket(((SendEntityFrame) currentFrame).getPacket(), <span class="literal">true</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// popCurrentFrame</span></span><br><span class="line">            <span class="comment">// if nodeSize == 0 then requestTakePacket</span></span><br><span class="line">            popCurrentFrame();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> args;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Then we would write the intermediate buffer to socket channel.</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">// writeTo operation to consume args</span></span><br><span class="line">    <span class="keyword">if</span> (args<span class="operator"> == </span>null) &#123;</span><br><span class="line">        processor.on<span class="constructor">ConsumeFailed(<span class="params">null</span>, <span class="params">new</span> IOException(<span class="string">&quot;ProvideIoArgs is null.&quot;</span>)</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">int</span> count = args.write<span class="constructor">To(<span class="params">socketChannel</span>)</span>;</span><br><span class="line">        <span class="keyword">if</span> (count<span class="operator"> == </span><span class="number">0</span>) &#123;</span><br><span class="line">            <span class="module-access"><span class="module"><span class="identifier">System</span>.</span></span>out.println(<span class="string">&quot;Current write zero data!&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (args.remained<span class="literal">()</span>) &#123;</span><br><span class="line">            <span class="comment">// attach unconsumed args</span></span><br><span class="line">            attach = args;</span><br><span class="line">            <span class="comment">// complete writeTo callback</span></span><br><span class="line">            ioProvider.register<span class="constructor">Output(<span class="params">socketChannel</span>, <span class="params">this</span>)</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            attach = null;</span><br><span class="line">            <span class="comment">// write finished callback</span></span><br><span class="line">            processor.on<span class="constructor">ConsumeCompleted(<span class="params">args</span>)</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="operator"></span></span><br><span class="line"><span class="operator"> ...</span></span><br><span class="line"><span class="operator"></span></span><br><span class="line"><span class="operator"></span>public void on<span class="constructor">ConsumeCompleted(IoArgs <span class="params">args</span>)</span> &#123;</span><br><span class="line">    synchronized (isSending) &#123;</span><br><span class="line">        isSending.set(<span class="literal">false</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    request<span class="constructor">Send()</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>The requestSend method will register for writable event again, once
+it became again writable, it will once again call fillData() to
+construct the next SendEntityFrame to fill data to the IoArgs until
+there all packet has been separated to frames.</p>
+<p>In SendEntityFrame we have a unConsumeEntityLength to mark the rest
+packet length to read from the FileInputStream so that we know when to
+stop building next frame.</p>
+<p>Here is the model of SendEntityFrame.</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SendEntityFrame</span> <span class="keyword">extends</span> <span class="title">AbsSendPacketFrame</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ReadableByteChannel channel;</span><br><span class="line">    <span class="comment">// the rest packet length to send</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">long</span> unConsumeEntityLength;</span><br><span class="line"></span><br><span class="line">    SendEntityFrame(<span class="keyword">short</span> identifier,</span><br><span class="line">                    <span class="keyword">long</span> entityLength, <span class="comment">// the whole packet length</span></span><br><span class="line">                    ReadableByteChannel channel,</span><br><span class="line">                    SendPacket packet) &#123;</span><br><span class="line">        <span class="keyword">super</span>((<span class="keyword">int</span>) Math.min(entityLength, Frame.MAX_CAPACITY),</span><br><span class="line">                Frame.TYPE_PACKET_ENTITY,</span><br><span class="line">                Frame.FLAG_NONE,</span><br><span class="line">                identifier,</span><br><span class="line">                packet);</span><br><span class="line">        <span class="keyword">this</span>.unConsumeEntityLength = entityLength - bodyRemaining;</span><br><span class="line">        <span class="keyword">this</span>.channel = channel;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="function"><span class="keyword">int</span> <span class="title">consumeBody</span><span class="params">(IoArgs args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (packet == <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="comment">// current frame has been stopped, fill fake data</span></span><br><span class="line">            <span class="function"><span class="keyword">return</span> args.<span class="title">fillEmpty</span><span class="params">(bodyRemaining)</span></span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">return</span> args.<span class="title">readFrom</span><span class="params">(channel)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="function">Frame <span class="title">buildNextFrame</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (unConsumeEntityLength == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> SendEntityFrame(getBodyIdentifier(),</span><br><span class="line">            unConsumeEntityLength, channel, packet);</span><br><span class="line">&#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+<h5 id="receiving-frame-logic">Receiving Frame logic</h5>
+<p>As we receive from the socket channel, we just need to receive the
+binary data frame by frame. By reading the frame type, we could know if
+it is a header frame or entity frame.</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">public static AbsReceiveFrame create<span class="constructor">Instance(IoArgs <span class="params">args</span>)</span> &#123;</span><br><span class="line">        byte<span class="literal">[]</span> buffer = <span class="keyword">new</span> byte<span class="literal">[F<span class="identifier">rame</span>.FRAME<span class="identifier">_HEADER_LENGTH</span>]</span>;</span><br><span class="line">        args.write<span class="constructor">To(<span class="params">buffer</span>, 0)</span>;</span><br><span class="line">        byte <span class="keyword">type</span> = buffer<span class="literal">[<span class="number">2</span>]</span>;</span><br><span class="line">        switch (<span class="keyword">type</span>) &#123;</span><br><span class="line">            case Frame.TYPE_COMMAND_SEND_CANCEL:</span><br><span class="line">                return <span class="keyword">new</span> <span class="constructor">CancelReceiveFrame(<span class="params">buffer</span>)</span>;</span><br><span class="line">            case Frame.TYPE_PACKET_HEADER:</span><br><span class="line">                return <span class="keyword">new</span> <span class="constructor">ReceiveHeaderFrame(<span class="params">buffer</span>)</span>;</span><br><span class="line">            case Frame.TYPE_PACKET_ENTITY:</span><br><span class="line">                return <span class="keyword">new</span> <span class="constructor">ReceiveEntityFrame(<span class="params">buffer</span>)</span>;</span><br><span class="line">            default:</span><br><span class="line">                throw <span class="keyword">new</span> <span class="constructor">UnsupportedOperationException(<span class="string">&quot;unsupported frame type&quot;</span> + <span class="params">type</span>)</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="operator"></span></span><br><span class="line"><span class="operator"></span></span><br><span class="line"><span class="operator">... </span></span><br><span class="line"><span class="operator"></span></span><br><span class="line"><span class="operator"></span></span><br><span class="line"><span class="operator"></span><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * this is frame header handling logic</span></span><br><span class="line"><span class="comment"> * build a new frame with help the frame header bytes (6 bytes)</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @param args</span></span><br><span class="line"><span class="comment"> * @return</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">private</span> Frame build<span class="constructor">NewFrame(IoArgs <span class="params">args</span>)</span> &#123;</span><br><span class="line">    AbsReceiveFrame frame = <span class="module-access"><span class="module"><span class="identifier">ReceiveFrameFactory</span>.</span></span>create<span class="constructor">Instance(<span class="params">args</span>)</span>;</span><br><span class="line">    <span class="keyword">if</span> (frame instanceof CancelReceiveFrame) &#123;</span><br><span class="line">        cancel<span class="constructor">ReceivePacket(<span class="params">frame</span>.<span class="params">getBodyIdentifier</span>()</span>);</span><br><span class="line">        return null;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (frame instanceof ReceiveEntityFrame) &#123;</span><br><span class="line">        WritableByteChannel channel = get<span class="constructor">PacketChannel(<span class="params">frame</span>.<span class="params">getBodyIdentifier</span>()</span>);</span><br><span class="line">        ((ReceiveEntityFrame) frame).bind<span class="constructor">PacketChannel(<span class="params">channel</span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    return frame;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>The first time we read a HeaderFrame, we could build a outputStream
+and conserve it into a packetMap. Then when it comes to a EntityFrame,
+we could refind the outputStream for given readable socket channel and
+write to its corresponding outputStream.</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">if</span> (frameTemp<span class="operator"> == </span>null) &#123;</span><br><span class="line">            Frame temp;</span><br><span class="line">            <span class="keyword">do</span> &#123;</span><br><span class="line">                temp = build<span class="constructor">NewFrame(<span class="params">args</span>)</span>;</span><br><span class="line">            &#125; <span class="keyword">while</span> (temp<span class="operator"> == </span>null<span class="operator"> &amp;&amp; </span>args.remained<span class="literal">()</span>);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (temp<span class="operator"> == </span>null) &#123;</span><br><span class="line">                return;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            frameTemp = temp;</span><br><span class="line">            <span class="keyword">if</span> (!args.remained<span class="literal">()</span>) &#123;</span><br><span class="line">                return;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">Frame currentFrame = frameTemp;</span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">// read frame body</span></span><br><span class="line">                <span class="comment">// if header frame then write header content to header frame property</span></span><br><span class="line">                <span class="comment">// if entity frame then write to channel</span></span><br><span class="line">                <span class="keyword">if</span> (currentFrame.handle(args)) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (currentFrame instanceof ReceiveHeaderFrame) &#123;</span><br><span class="line">                        ReceiveHeaderFrame headerFrame = (ReceiveHeaderFrame) currentFrame;</span><br><span class="line">                        <span class="comment">// build packet with header frame body information</span></span><br><span class="line">                        ReceivePacket packet = provider.take<span class="constructor">Packet(<span class="params">headerFrame</span>.<span class="params">getPacketType</span>()</span>,</span><br><span class="line">                                headerFrame.get<span class="constructor">PacketLength()</span>,</span><br><span class="line">                                headerFrame.get<span class="constructor">PacketHeaderInfo()</span></span><br><span class="line">                        );</span><br><span class="line">                        <span class="comment">// construct packetModel from packet and add it to packetMap</span></span><br><span class="line">                        append<span class="constructor">NewPacket(<span class="params">headerFrame</span>.<span class="params">getBodyIdentifier</span>()</span>, packet);</span><br><span class="line">                    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (currentFrame instanceof ReceiveEntityFrame) &#123;</span><br><span class="line">                        complete<span class="constructor">EntityFrame((ReceiveEntityFrame)</span> currentFrame);</span><br><span class="line">                    &#125;</span><br><span class="line">                    frameTemp = null;</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; catch (IOException e) &#123;</span><br><span class="line">                e.print<span class="constructor">StackTrace()</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">while</span> (args.remained<span class="literal">()</span>);<span class="operator"></span></span><br><span class="line"><span class="operator"></span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line"><span class="operator"></span></span><br><span class="line"><span class="operator"></span></span><br><span class="line"><span class="operator"></span><span class="keyword">private</span> void append<span class="constructor">NewPacket(<span class="params">short</span> <span class="params">identifier</span>, ReceivePacket <span class="params">packet</span>)</span> &#123;</span><br><span class="line">        PacketModel model = <span class="keyword">new</span> <span class="constructor">PacketModel(<span class="params">packet</span>)</span>;</span><br><span class="line">        packetMap.put(identifier, model);</span><br><span class="line">&#125;<span class="operator"></span></span><br><span class="line"><span class="operator"></span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line"><span class="operator"></span></span><br><span class="line"><span class="operator"></span></span><br><span class="line"><span class="operator"></span><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * a data model to manage packet and channel couple for later recovery</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">static <span class="keyword">class</span> PacketModel &#123;</span><br><span class="line">    final ReceivePacket packet;</span><br><span class="line">    final WritableByteChannel channel;</span><br><span class="line">    volatile long unreceivedlength;</span><br><span class="line"></span><br><span class="line">    <span class="constructor">PacketModel(ReceivePacket&lt;?, ?&gt; <span class="params">packet</span>)</span> &#123;</span><br><span class="line">        this.packet = packet;</span><br><span class="line">	<span class="comment">// packet.open() will create a outputStream via ReceivePacket</span></span><br><span class="line">        this.channel = <span class="module-access"><span class="module"><span class="identifier">Channels</span>.</span></span><span class="keyword">new</span><span class="constructor">Channel(<span class="params">packet</span>.<span class="params">open</span>()</span>);</span><br><span class="line">        this.unreceivedlength = packet.length<span class="literal">()</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="conclusion">Conclusion</h2>
+<p>To sum up, with the help of framing. The server will be able to
+distinguish different packets arriving in parallel. According to
+different types of received frames, we could define different ways of
+handling. Treating big volume of file transfer with small pieces of data
+chunk is an effective way to address the problems we could face in a
+long connection transfer.</p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/07/18/jvm-memory-model-and-gc/" data-toggle="tooltip" data-placement="top" title="JVM runtime system and garbage collection">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/07/07/socket-transfer-sticky-lost-package-problem-solution/" data-toggle="tooltip" data-placement="top" title="Socket transfer sticky & lost package problem and general solution">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/ymurong">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/yanchao-murong-b4a97992">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.youtube.com/channel/UCyTFDuBDkgCtFV_4ji4YxZQ">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-youtube fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yanchao&#39;s Blog 2022 
+                    <br>
+                    Theme by <a target="_blank" rel="noopener" href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a target="_blank" rel="noopener" href="http://blog.kaijun.rocks">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://ymurong.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+    <!-- Image to hack wechat -->
+    <img src="https://ymurong.com/img/icon_wechat.png" width="0" height="0" />
+    <!-- Migrate from head to bottom, no longer block render and still work -->
+
+    
+    
+  
+
+</body>
+
+</html>

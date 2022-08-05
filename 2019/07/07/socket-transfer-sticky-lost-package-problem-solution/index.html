@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Socket transfer sticky &amp; lost package problem and general solution - Yanchao&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://ymurong.com/2019/07/07/socket-transfer-sticky-lost-package-problem-solution/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yanchao&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/about.html">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Image to hack wechat -->
+<!-- <img src="https://ymurong.com/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#data transfer" title="data transfer">data transfer</a>
+                        
+                    </div>
+                    <h1>Socket transfer sticky &amp; lost package problem and general solution</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Yanchao MURONG on
+                        2019-07-07
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>Recently, I have been learning some socket programing skills. Thanks
+to <a target="_blank" rel="noopener" href="https://github.com/qiujuer"><span class="citation"
+data-cites="_qiujuer_">@_qiujuer_</span></a>, I finally came to get the
+hang of the mysterious Sticky &amp; Lost Package Problem and had a way
+to address it. Here is my little summary about what I have
+discovered.</p>
+</blockquote>
+<h1 id="what-is-socket-sticky-package-and-lost-package">What is Socket
+Sticky Package and Lost Package</h1>
+<p>You would have wondered: TCP as a stable protocole should never have
+sticky package problem as the order and integrity is guaranteed by the
+protocole itself.</p>
+<p>And that is very true. As a matter of fact, instead of being a
+transport level problem, Sticky Package and Lost Package are actually
+logical level problems which could occur if we don't handle it
+right.</p>
+<p>I will illustrate it by some images.</p>
+<h3 id="sticky-package">Sticky Package</h3>
+<p>Ideally, datatransfer could be like this so that the receiver could
+always distinguish each independant package.</p>
+<figure>
+<img
+src="/img/2019/7/socket-sticky-packet-1-26db2c799016481a9a7b16d112d9de8f.jpg"
+alt="socket-sticky-packet-1" />
+<figcaption aria-hidden="true">socket-sticky-packet-1</figcaption>
+</figure>
+<p>However, in the real life, it is very often that the client send two
+or more packages continuously, which make it possible for server to
+treat two packages as a single package and hence leads to the famous
+sticky package problem just like the following image.</p>
+<figure>
+<img
+src="/img/2019/7/socket-sticky-packet-2-9e4dfd837f7b47fc98bbeb03cb24304d.jpg"
+alt="socket-sticky-packet-2" />
+<figcaption aria-hidden="true">socket-sticky-packet-2</figcaption>
+</figure>
+<h3 id="lost-package">Lost Package</h3>
+<p>Basically, as server receives data, it will read from the channel and
+transfer it to user space buffer. If the server receives a single
+biiiiig package that exceeds the buffer's capacity, only part of the
+data will be extracted and hence results in problems like the following
+cases.</p>
+<figure>
+<img
+src="/img/2019/7/socket-sticky-packet-3-8bfa294dfd5c4406aa60c293360a4ee2.jpg"
+alt="socket-sticky-packet-3" />
+<figcaption aria-hidden="true">socket-sticky-packet-3</figcaption>
+</figure>
+<figure>
+<img
+src="/img/2019/7/socket-sticky-packet-4-c8899d75bb1d48b9b97a9dba09476cca.jpg"
+alt="socket-sticky-packet-4" />
+<figcaption aria-hidden="true">socket-sticky-packet-4</figcaption>
+</figure>
+<p>You see that together with sticky packages, you server could ended
+with a mess and all the packages just get mixed.</p>
+<h1 id="general-solution">General Solution</h1>
+<p>The simplest solution is to add a length header at the beginning of
+each message so that it will be easy for the server to know how many
+bytes to read in order to get the whole message and only its own
+message.</p>
+<h3 id="design-a-box-to-wrap-the-complete-message">Design a box to wrap
+the complete message</h3>
+<p>Here we have designed a packet box with a supplementary length
+property and position property. <figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StringReceivePacket</span> extends ReceivePacket &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">byte</span>[] buffer;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> position;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">StringReceivePacket</span><span class="params">(<span class="type">int</span> len)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.buffer = <span class="keyword">new</span> <span class="type">byte</span>[len];</span><br><span class="line">        length = len;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @<span class="function">Override</span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="type">void</span> <span class="title">save</span><span class="params">(<span class="type">byte</span>[] bytes, <span class="type">int</span> count)</span> </span>&#123;</span><br><span class="line">        System.<span class="built_in">arraycopy</span>(bytes, <span class="number">0</span>, buffer, position, count);</span><br><span class="line">        position += count;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="type">String</span> <span class="title">string</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">String</span>(buffer);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @<span class="function">Override</span></span><br><span class="line"><span class="function">    <span class="keyword">public</span> <span class="type">void</span> <span class="title">close</span><span class="params">()</span> throws IOException </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="read-data-in-an-asynchronous-manner">Read data in an
+asynchronous manner</h3>
+<p>Everytime when the socket channel became readable, the selector that
+was registered for this channel will be notified and the selectionkey
+which corresponds to the socket channel will be selected. Hence, we
+could possibly define a callback runnable and put it together with the
+selectionkey in a map-like structure.</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">HandleInputCallback</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="function"><span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        canProviderInput();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="function"><span class="keyword">void</span> <span class="title">canProviderInput</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>In this callback handler, we need to define the strategy about how we
+receive the bytes from the socket channel. Obviously, here we need an
+intermediate object that works as a transit medium to transport data
+from socket channel to StringReceivePacket continuously.</p>
+<p>Here is our transit medium called IoArgs, which is just like a truck
+with fixed sized container (the buffer) that can be used as a
+intermediate relay.</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">IoArgs</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> limit = <span class="number">256</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">byte</span>[] byteBuffer = <span class="keyword">new</span> <span class="type">byte</span>[<span class="number">256</span>];</span><br><span class="line">    <span class="keyword">private</span> ByteBuffer buffer = ByteBuffer.<span class="built_in">wrap</span>(byteBuffer);</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * writeTo data from buffer into bytes</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * @param bytes</span></span><br><span class="line"><span class="comment">     * @param offset</span></span><br><span class="line"><span class="comment">     * @return</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="type">int</span> <span class="title">writeTo</span><span class="params">(<span class="type">byte</span>[] bytes, <span class="type">int</span> offset)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// to prevent bytes from being overflowed</span></span><br><span class="line">        <span class="type">int</span> size = Math.<span class="built_in">min</span>(bytes.length - offset, buffer.<span class="built_in">remaining</span>());</span><br><span class="line">        <span class="comment">// This method transfers bytes from this buffer into the given destination array.</span></span><br><span class="line">        buffer.<span class="built_in">get</span>(bytes, offset, size);</span><br><span class="line">        <span class="keyword">return</span> size;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * read data from SocketChannel</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * @param channel</span></span><br><span class="line"><span class="comment">     * @return</span></span><br><span class="line"><span class="comment">     * @throws IOException</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="type">int</span> <span class="title">readFrom</span><span class="params">(SocketChannel channel)</span> throws IOException </span>&#123;</span><br><span class="line">        <span class="built_in">startWriting</span>(); <span class="comment">// init buffer</span></span><br><span class="line">        <span class="type">int</span> bytesProduced = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (buffer.<span class="built_in">hasRemaining</span>()) &#123;</span><br><span class="line">            <span class="type">int</span> len = channel.<span class="built_in">read</span>(buffer);</span><br><span class="line">            <span class="keyword">if</span> (len &lt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">EOFException</span>();</span><br><span class="line">            &#125;</span><br><span class="line">            bytesProduced += len;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">finishWriting</span>(); <span class="comment">// set buffer ready to be read</span></span><br><span class="line">        <span class="keyword">return</span> bytesProduced;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * set single writing limit</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * @param limit</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="type">void</span> <span class="title">limit</span><span class="params">(<span class="type">int</span> limit)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.limit = limit;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="type">void</span> <span class="title">writeLength</span><span class="params">(<span class="type">int</span> total)</span> </span>&#123;</span><br><span class="line">        buffer.<span class="built_in">putInt</span>(total);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="type">int</span> <span class="title">readLength</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> buffer.<span class="built_in">getInt</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="type">int</span> <span class="title">capacity</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> buffer.<span class="built_in">capacity</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> interface IoArgsEventListener &#123;</span><br><span class="line">        <span class="function"><span class="type">void</span> <span class="title">onStarted</span><span class="params">(IoArgs args)</span></span>;</span><br><span class="line">        <span class="function"><span class="type">void</span> <span class="title">onCompleted</span><span class="params">(IoArgs args)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>Firstly, we need to know the size of the arriving message by reading
+4 bytes in the first place(int type represents 4 bytes). After knowing
+the size, we could initiate the StringReceivePacket, the final
+cutomizable container.</p>
+<p>Then we will get all remaining data until it fills all the
+IoArg's(the transit medium) fixed buffer.</p>
+<blockquote>
+<p>It is definitely possible that the remaining data is far more larger
+than the fixed buffer of the transit medium, which makes it impossible
+to carry all the data from the socket channel. But never fear, as the
+rest of the data is still in socket channel, it will be carried the next
+time by the transit medium through the callback runnable. What's more
+important is that the transit medium should be capable of reading
+exactly what StringReceivePacket is expecting, not a byte more, not a
+byte less!</p>
+</blockquote>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">int</span> receiveSize;</span><br><span class="line"><span class="keyword">if</span> (packetTemp<span class="operator"> == </span>null) &#123;</span><br><span class="line">    <span class="comment">// first to receive the message length</span></span><br><span class="line">    receiveSize = <span class="number">4</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// receive the rest of the message</span></span><br><span class="line">    <span class="comment">// to prevent Ioargs buffer from being overflowed</span></span><br><span class="line">    receiveSize = <span class="module-access"><span class="module"><span class="identifier">Math</span>.</span></span>min(total - position, args.capacity<span class="literal">()</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// set the size of data to receive to prevent sticky message</span></span><br><span class="line">args.limit(receiveSize);<span class="operator"></span></span><br><span class="line"><span class="operator"></span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line"><span class="operator"></span></span><br><span class="line"><span class="operator"></span><span class="comment">// readFrom operation</span></span><br><span class="line"><span class="keyword">if</span> (args.read<span class="constructor">From(<span class="params">socketChannel</span>)</span> &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="comment">// complete readFrom callback</span></span><br><span class="line">    listener.on<span class="constructor">Completed(<span class="params">args</span>)</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    throw <span class="keyword">new</span> <span class="constructor">IOException(<span class="string">&quot;Cannnot readFrom any data from current socketChannel&quot;</span>)</span>;</span><br><span class="line">&#125;<span class="operator"></span></span><br><span class="line"><span class="operator">...</span></span><br><span class="line"><span class="operator"></span></span><br><span class="line"><span class="operator"></span><span class="keyword">if</span> (packetTemp<span class="operator"> == </span>null) &#123;</span><br><span class="line">    <span class="comment">// no existent current packet -&gt; a new packet to receive</span></span><br><span class="line">    <span class="comment">// read the message length</span></span><br><span class="line">    <span class="built_in">int</span> length = args.read<span class="constructor">Length()</span>;</span><br><span class="line">    <span class="comment">// init a receive packet with the exact length</span></span><br><span class="line">    packetTemp = <span class="keyword">new</span> <span class="constructor">StringReceivePacket(<span class="params">length</span>)</span>;</span><br><span class="line">    <span class="comment">// init a new buffer with the exact length</span></span><br><span class="line">    buffer = <span class="keyword">new</span> byte<span class="literal">[<span class="identifier">length</span>]</span>;</span><br><span class="line">    total = length;</span><br><span class="line">    position = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="fill-the-box-as-a-japanese">Fill the box as a Japanese</h3>
+<blockquote>
+<p>Japanese are famous for their precision and that is exactly what we
+need in socket transport, to be accurate to bytes!</p>
+</blockquote>
+<p>You should have noticed that in the code, we had some indicators like
+<strong>total, position, count...</strong> And these are exactly what we
+depends on to achieve our precision objective.</p>
+<p>When we first get the length of the expecting message, we will manage
+a new variable called total. And in the mean time, we create a new
+variable called postion with a initial value of 0.</p>
+<p>Each time the transit medium tries to read from the socket channel,
+we will set a limit <strong>[Math.min(total - position,
+args.capacity()]</strong> to make sure that read not more not less.</p>
+<p>Afterwards, transit medium will give us a count variable for us to
+know how many bytes has been actually read from socket channel.</p>
+<p>Then, when transit medium transports the data to StringReceivePacket,
+we need to accumulate the position variable by the count variable.
+Finally, by comparing the position and total variable, we could know if
+the StringReceivePacket has get its expected complete message.</p>
+<figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// transfer data received from socket channel via transit medium IoArgs to our dispatcher buffer</span></span><br><span class="line">int <span class="built_in">count</span> = args.writeTo(<span class="built_in">buffer</span>, <span class="number">0</span>);</span><br><span class="line"><span class="comment">// sometimes you will have zero as buffer args has already been read previously &lt;= args.readLength();</span></span><br><span class="line"><span class="keyword">if</span> (<span class="built_in">count</span> &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    packetTemp.save(<span class="built_in">buffer</span>, <span class="built_in">count</span>);</span><br><span class="line">    <span class="comment">// register current packet position to judge whether message has been completely received</span></span><br><span class="line">    position += <span class="built_in">count</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (position == total) &#123;</span><br><span class="line">        <span class="comment">//transfer complete packet to outside invoker</span></span><br><span class="line">        completePacket();</span><br><span class="line">        <span class="comment">//removed current packet as it has been fully received by outside invoker</span></span><br><span class="line">        packetTemp = <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="conclusion">Conclusion</h1>
+<p>To sum up, we have a StringReceivePacket as a final container and a
+IoArgs as a transit medium which continuously relay data from socket
+channel to our final container in an asynchronous manner. With some
+extra indicators (total, position, count ...), all participants knows
+exactly answers to the below questions.</p>
+<ul>
+<li>what's the size of expected message</li>
+<li>how many bytes have I read</li>
+<li>how many bytes yet to read</li>
+<li>Am I finished reading</li>
+</ul>
+<p>By this way, we are able to solve the cumbersome sticky &amp; lost
+package problem.</p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/07/16/Model-file-transfer-vs-message-transfer-and-framing-model/" data-toggle="tooltip" data-placement="top" title="File Transfer vs Message Transfer and Framing Model">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/05/23/Hexo-Documentation/" data-toggle="tooltip" data-placement="top" title="Hexo Documentation">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#data transfer" title="data transfer">data transfer</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/ymurong">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/yanchao-murong-b4a97992">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.youtube.com/channel/UCyTFDuBDkgCtFV_4ji4YxZQ">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-youtube fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yanchao&#39;s Blog 2022 
+                    <br>
+                    Theme by <a target="_blank" rel="noopener" href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a target="_blank" rel="noopener" href="http://blog.kaijun.rocks">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://ymurong.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+    <!-- Image to hack wechat -->
+    <img src="https://ymurong.com/img/icon_wechat.png" width="0" height="0" />
+    <!-- Migrate from head to bottom, no longer block render and still work -->
+
+    
+    
+  
+
+</body>
+
+</html>

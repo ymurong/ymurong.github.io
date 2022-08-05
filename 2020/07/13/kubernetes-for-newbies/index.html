@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Kubernetes for newbies - Yanchao&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://ymurong.com/2020/07/13/kubernetes-for-newbies/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yanchao&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/about.html">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Image to hack wechat -->
+<!-- <img src="https://ymurong.com/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#k8s" title="k8s">k8s</a>
+                        
+                    </div>
+                    <h1>Kubernetes for newbies</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Yanchao MURONG on
+                        2020-07-13
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h3 id="what-is-kubernetes-and-what-does-it-do">What is Kubernetes and
+what does it do</h3>
+<p>Kubernetes is a container orchestration tool for the automated
+management of conatinerized applications.</p>
+<p>Three major benefits of a orchestration tool * help multiple
+instances of a piece of software to be spread across multiple servers
+(high availability) * roll out new code changes accross the entire
+cluster (rolling update) * automatically create containers to handle
+additional load (scale up)</p>
+<h3 id="typical-kubernetes-cluster-architecture">Typical Kubernetes
+cluster architecture</h3>
+<p>A kubernetes cluster has one or more control servers which manage and
+control the cluster and host Kubernetes API. Here, the master node is
+actually the control server. Worker nodes are responsible for running
+your actual application workloads.</p>
+<figure>
+<img src="/img/2020/07/image-a8f801adef9147aebe72b28b631ce3a7.png"
+alt="image.png" />
+<figcaption aria-hidden="true">image.png</figcaption>
+</figure>
+<ul>
+<li>etcd: provides distributed, synchronized data storage for the
+cluster state</li>
+<li>kube-apiserver: servers the kubernetes API, the primary interface
+for the cluster</li>
+<li>kubelet: an agent that manages the process of running containers on
+each node between kube-apiserver and docker runtime</li>
+<li>kubectl: a command line tool that interact with the cluster</li>
+<li>kube-controller-manager: a system state regulator that watches the
+shared state of the cluster through the apiserver and makes changes
+attempting to move the current state towards the desired state. In
+short, it is a kind of backend interface that bundles servral components
+into one package</li>
+<li>kube-scheduler: a policy-rich, topology-aware, workload-specific
+function that balances and distributes available resources by taking
+into account individual and collective resource requirements, quality of
+service requirements, hardware/software/policy constraints, affinity and
+anti-affinity specifications, data locality, inter-workload
+interference, deadlines, and so on</li>
+<li>kube-proxy: handles network communication between nodes by adding
+firewall routing rules</li>
+</ul>
+<p>Useful commands: <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods -n kube-system</span><br></pre></td></tr></table></figure></p>
+<h3 id="containers-and-pods">Containers and Pods</h3>
+<p>Pods: the smallest and most basic building block of the kubernetes
+model, which consists of one or more containers, share the same storage
+resources and a unique IP address in the Kubernetes cluster network</p>
+<p>Some useful commands: <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> &lt;&lt; <span class="string">EOF | kubectl create -f -</span></span><br><span class="line"><span class="string">apiVersion: v1</span></span><br><span class="line"><span class="string">kind: Pod</span></span><br><span class="line"><span class="string">metadata:</span></span><br><span class="line"><span class="string">  name: nginx</span></span><br><span class="line"><span class="string">spec:</span></span><br><span class="line"><span class="string">  containers:</span></span><br><span class="line"><span class="string">  - name: nginx</span></span><br><span class="line"><span class="string">    image: nginx</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line">kubectl get pods -n kube-system</span><br><span class="line">kubectl describe pod nginx</span><br><span class="line">kubectl delete pod nginx</span><br></pre></td></tr></table></figure></p>
+<h3 id="networking-in-kubernetes">Networking in Kubernetes</h3>
+<p>The kubernetes networking model involves creating a virtual network
+accross the whole cluster. This means that every pod on the cluster has
+a unique IP address, and can communicate with any other pod in cluster,
+even if that other pod is running on a different node.</p>
+<p>Useful commands: <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get pods -o wide</span><br></pre></td></tr></table></figure></p>
+<h3 id="kubernetes-deployment">Kubernetes Deployment</h3>
+<p>Deployment: a great way to automate the management of pods, which
+allows you to specify a desired state for a set of pods. The cluster
+will then constantly work to maintain that desired state</p>
+<ul>
+<li>scaling</li>
+<li>rolling update</li>
+<li>self-healing</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">cat</span> <span class="string">&lt;&lt;EOF</span> <span class="string">|</span> <span class="string">kubectl</span> <span class="string">create</span> <span class="string">-f</span> <span class="bullet">-</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx-deployment</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">2</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">nginx:1.15.4</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+<h3 id="kubernetes-service">Kubernetes Service</h3>
+<p>Service allow you to dynamically access a group of reploca pods.
+Replica pods are often being created and destroyed. The service creates
+an abstraction layer on top of a set of replica pods so that you can get
+access to the service rather than the pods.</p>
+<p>In the below example, we are actually exposing the nginx deployment
+to external source. But it is not usally a good idea. In most cases, we
+will use ClusterIP to declare an internal service which will be
+accessible for all pods in the cluster.</p>
+<figure class="highlight nestedtext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">cat &lt;&lt; EOF | kubectl create -f -</span></span><br><span class="line"><span class="attribute">kind</span><span class="punctuation">:</span> <span class="string">Service</span></span><br><span class="line"><span class="attribute">apiVersion</span><span class="punctuation">:</span> <span class="string">v1</span></span><br><span class="line"><span class="attribute">metadata</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">name</span><span class="punctuation">:</span> <span class="string">nginx-service</span></span><br><span class="line"><span class="attribute">spec</span><span class="punctuation">:</span></span><br><span class="line">  <span class="attribute">selector</span><span class="punctuation">:</span></span><br><span class="line">    <span class="attribute">app</span><span class="punctuation">:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attribute">ports</span><span class="punctuation">:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">protocol: TCP</span></span><br><span class="line">    <span class="attribute">port</span><span class="punctuation">:</span> <span class="string">80</span></span><br><span class="line">    <span class="attribute">targetPort</span><span class="punctuation">:</span> <span class="string">80</span></span><br><span class="line">    <span class="attribute">nodePort</span><span class="punctuation">:</span> <span class="string">30080</span></span><br><span class="line">  <span class="attribute">type</span><span class="punctuation">:</span> <span class="string">NodePort</span></span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line"><span class="comment"># Get a list of services in the cluster</span></span><br><span class="line">kubectl get svc</span><br><span class="line"></span><br><span class="line"><span class="comment"># Since this is a NodePort service, you should be able to access it using port 30080 on any of your cluster&#x27;s servers. </span></span><br></pre></td></tr></table></figure>
+<h3 id="building-a-kubernetes-cluster-on-ubuntu-8">Building a Kubernetes
+Cluster on Ubuntu 8</h3>
+<ol type="1">
+<li><p>Docker <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -</span><br><span class="line"></span><br><span class="line">sudo add-apt-repository \</span><br><span class="line">   <span class="string">&quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu \</span></span><br><span class="line"><span class="string">   <span class="subst">$(lsb_release -cs)</span> \</span></span><br><span class="line"><span class="string">   stable&quot;</span></span><br><span class="line"></span><br><span class="line">sudo apt-get update</span><br><span class="line"></span><br><span class="line">sudo apt-get install -y docker-ce=18.06.1~ce~3-0~ubuntu</span><br><span class="line"></span><br><span class="line">sudo apt-mark hold docker-ce</span><br></pre></td></tr></table></figure></p></li>
+<li><p>kubelet kubeadm kubectl</p></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -</span><br><span class="line"></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt; <span class="string">EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list</span></span><br><span class="line"><span class="string">deb https://apt.kubernetes.io/ kubernetes-xenial main</span></span><br><span class="line"><span class="string">EOF</span></span><br><span class="line"></span><br><span class="line">sudo apt-get update</span><br><span class="line"></span><br><span class="line">sudo apt-get install -y kubelet=1.15.7-00 kubeadm=1.15.7-00 kubectl=1.15.7-00</span><br><span class="line"></span><br><span class="line">sudo apt-mark hold kubelet kubeadm kubectl</span><br></pre></td></tr></table></figure>
+<ol start="3" type="1">
+<li>Init master node</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo kubeadm init --pod-network-cidr=10.244.0.0/16</span><br></pre></td></tr></table></figure>
+<ol start="4" type="1">
+<li>Set up the local kubeconfig</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p <span class="variable">$HOME</span>/.kube</span><br><span class="line">sudo <span class="built_in">cp</span> -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">sudo <span class="built_in">chown</span> $(<span class="built_in">id</span> -u):$(<span class="built_in">id</span> -g) <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">kubectl version</span><br></pre></td></tr></table></figure>
+<ol start="5" type="1">
+<li><p>Join master node from worker node <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo kubeadm <span class="built_in">join</span> <span class="variable">$some_ip</span>:6443 --token <span class="variable">$some_token</span> --discovery-token-ca-cert-hash <span class="variable">$some_hash</span></span><br><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure></p></li>
+<li><p>Setup Flannel network</p></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># On all three nodes</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;net.bridge.bridge-nf-call-iptables=1&quot;</span> | sudo <span class="built_in">tee</span> -a /etc/sysctl.conf</span><br><span class="line">sudo sysctl -p</span><br><span class="line"></span><br><span class="line"><span class="comment"># Master node </span></span><br><span class="line">kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/bc79dd1505b0c8681ece4de4c0d86c5cd2643275/Documentation/kube-flannel.yml</span><br><span class="line"></span><br><span class="line"><span class="comment"># Verify that all the nodes now have a STATUS of Ready</span></span><br><span class="line">kubectl get nodes</span><br><span class="line"><span class="comment"># verify that the Flannel pods are up and running.</span></span><br><span class="line">kubectl get pods -n kube-system</span><br></pre></td></tr></table></figure>
+<h3 id="microservice-with-kubernetes">Microservice with Kubernetes</h3>
+<p>Last but not the least, a very interesting microservice application
+which could be deployed by kubernetes:
+https://github.com/linuxacademy/robot-shop</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/linuxacademy/robot-shop.git</span><br><span class="line">kubectl create namespace robot-shop</span><br><span class="line">kubectl -n robot-shop create -f ~/robot-shop/K8s/descriptors/</span><br><span class="line">kubectl get pods -n robot-shop -w</span><br><span class="line">http://<span class="variable">$kube_server_public_ip</span>:30080</span><br></pre></td></tr></table></figure>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2020/07/15/kubernetes-for-developer/" data-toggle="tooltip" data-placement="top" title="Kubernetes for developer">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/10/15/use-scala-in-springboot-application/" data-toggle="tooltip" data-placement="top" title="Use Scala in Springboot Application">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#k8s" title="k8s">k8s</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/ymurong">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/yanchao-murong-b4a97992">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.youtube.com/channel/UCyTFDuBDkgCtFV_4ji4YxZQ">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-youtube fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yanchao&#39;s Blog 2022 
+                    <br>
+                    Theme by <a target="_blank" rel="noopener" href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a target="_blank" rel="noopener" href="http://blog.kaijun.rocks">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://ymurong.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+    <!-- Image to hack wechat -->
+    <img src="https://ymurong.com/img/icon_wechat.png" width="0" height="0" />
+    <!-- Migrate from head to bottom, no longer block render and still work -->
+
+    
+    
+  
+
+</body>
+
+</html>

@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Spark Core - Intro - Yanchao&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://ymurong.com/2019/08/15/spark-core-intro/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yanchao&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/about.html">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Image to hack wechat -->
+<!-- <img src="https://ymurong.com/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#spark" title="spark">spark</a>
+                        
+                    </div>
+                    <h1>Spark Core - Intro</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Yanchao MURONG on
+                        2019-08-15
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>An introduction to spark core: including its key concepts,
+architecture, cache system, lineage mecanism, dependency mecanism and
+tuning techinques.</p>
+</blockquote>
+<h3 id="architecture">Architecture</h3>
+<p><img
+src="/img/2019/8/spark-cluster-overview-8c86832f8e3a4d2d8a8eb3df38f79999.png"
+alt="spark-cluster-overview" /> - Each application gets its own executor
+processes and run tasks in multiple threads - 1 executor = 1 process = 1
+jvm - 1 task = 1 thread of the executor process - good isolation - data
+cannot be shared across different Spark applications (instances of
+SparkContext) without writing it to an external storage system - Driver
+program must listen for and accept incoming connections from its
+executors throughout its lifetime - driver needs to send code and tasks
+to executors - driver needs to get heartbeat information from executors,
+if one node failed, ask for another executor in another worker node to
+run the failed task</p>
+<h3 id="key-concepts">Key concepts</h3>
+<ul>
+<li><p>Application</p>
+<ul>
+<li>1 application spark = 1 driver + n executors</li>
+<li>User program built on Spark.</li>
+<li>Consists of a driver program and executors on the cluster.
+<ul>
+<li>spark0402.py</li>
+<li>pyspark/spark-shell</li>
+</ul></li>
+</ul></li>
+<li><p>Driver program</p>
+<ul>
+<li>The process running the main() function of the application</li>
+<li>creating the SparkContext</li>
+</ul></li>
+<li><p>Cluster manager: An external service for acquiring resources on
+the cluster (e.g. standalone manager, Mesos, YARN)<br />
+<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">spark-submit --<span class="keyword">master</span> <span class="title">local</span>[<span class="number">2</span>] </span><br><span class="line">spark-submit --<span class="keyword">master</span> <span class="title">spark</span>://hadoop000:<span class="number">7077</span>/yarn</span><br></pre></td></tr></table></figure></p></li>
+<li><p>Deploy mode: Distinguishes where the driver process runs.</p>
+<ul>
+<li>In "cluster" mode, the framework launches the driver inside of the
+cluster.
+<ul>
+<li>Cluster is in charge of scheduling tasks on the cluster as well as
+allocating resources.</li>
+</ul></li>
+<li>In "client" mode, the submitter launches the driver outside of the
+cluster.
+<ul>
+<li>Cluster is only in charge of allocating resources.</li>
+</ul></li>
+</ul></li>
+<li><p>Worker node: Any node that can run application code in the
+cluster</p>
+<ul>
+<li>standalone: slave node slaves.conf</li>
+<li>yarn: nodemanager</li>
+</ul></li>
+<li><p>Executor: A process launched for an application on a worker
+node</p>
+<ul>
+<li>runs tasks</li>
+<li>keeps data in memory or disk storage across them</li>
+<li>Each application has its own executors.</li>
+</ul></li>
+<li><p>Task: A unit of work that will be sent to one executor</p></li>
+<li><p>Stage: Each job gets divided into smaller sets of tasks called
+stages that depend on each other (similar to the map and reduce stages
+in MapReduce)</p>
+<ul>
+<li>the stage usually starts from taking data and ends with
+shuffle.</li>
+</ul></li>
+<li><p>Job: A parallel computation consisting of multiple tasks that
+gets spawned in response to a Spark action (e.g. save, collect);</p>
+<ul>
+<li>one action = one job</li>
+</ul></li>
+</ul>
+<h3 id="comparison-with-hadoop">Comparison with Hadoop</h3>
+<ul>
+<li>Spark
+<ul>
+<li>Application = Driver + Executors</li>
+<li>1 applcation = 0-N jobs</li>
+<li>1 action = 1 job = 1-N stages</li>
+<li>1 stage = 1-N tasks</li>
+<li>1 task = 1 thread</li>
+</ul></li>
+<li>Hadoop
+<ul>
+<li>1 MR = 1 job</li>
+<li>1 job = N Tasks</li>
+<li>1 Task = 1 process</li>
+</ul></li>
+</ul>
+<h3 id="spark-cache">Spark Cache</h3>
+<p>Caching or persistence are optimisation techniques for (iterative and
+interactive) Spark computations. They help saving interim partial
+results so they can be reused in subsequent stages. These interim
+results as RDDs are thus kept in memory (default) or more solid storages
+like disk and/or replicated across nodes.</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">   * Persist this RDD with the default storage level (`MEMORY_ONLY`).</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">def</span> cache(): <span class="keyword">this</span>.type = persist()</span><br><span class="line"></span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">   * Set this RDD&#x27;s storage level to persist its values across operations after the first time</span></span><br><span class="line"><span class="comment">   * it is computed. This can only be used to assign a new storage level if the RDD does not</span></span><br><span class="line"><span class="comment">   * have a storage level set yet. Local checkpointing is an exception.</span></span><br><span class="line"><span class="comment">   */</span></span><br><span class="line">  <span class="keyword">def</span> persist(newLevel: StorageLevel): <span class="keyword">this</span>.type = &#123;</span><br><span class="line">    <span class="keyword">if</span> (isLocallyCheckpointed) &#123;</span><br><span class="line">   persist(LocalRDDCheckpointData.transformStorageLevel(newLevel), allowOverride = <span class="keyword">true</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      persist(newLevel, allowOverride = <span class="keyword">false</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>Cache is recommended if one RDD could be reused in upcoming
+computations. Like transformation, cache operation is lazy, it won't be
+delivered to executors until there is an action operator while unpersist
+will be executed immediately.</p>
+<h3 id="spark-lineage">Spark lineage</h3>
+<p>RDDs are fault tolerant as they track data lineage information to
+rebuild lost data automatically on failure. When a transformation(map or
+filter etc) is called, it is not executed by Spark immediately, instead
+a lineage is created for each transformation. A lineage will keep track
+of what all transformations has to be applied on that RDD, including the
+location from where it has to read the data.</p>
+<h3 id="spark-dependency">Spark Dependency</h3>
+<ul>
+<li><p>Narrow Dependency (pipeline-able): A parent partition will only
+be used by child partition for one time. (map, filter, union
+...)</p></li>
+<li><p>Wide dependency (shuffle): A parent partition will be used by
+child partition for multiple times. (groupByKey, reduceByKey, join with
+inputs not co-partitioned, repartition, coalesce, cogroup ...)</p></li>
+</ul>
+<blockquote>
+<p>Certain operations within Spark trigger an event known as the
+shuffle. The shuffle is Spark’s mechanism for re-distributing data so
+that it’s grouped differently across partitions. This typically involves
+copying data across executors and machines, making the shuffle a complex
+and costly operation.</p>
+</blockquote>
+<h3 id="tuning">Tuning</h3>
+<h4 id="data-serialization">Data Serialization</h4>
+<p>By default, Spark serializes objects using Java’s ObjectOutputStream
+framework. and can work with any class you create that implements
+java.io.Serializable.</p>
+<p>Alternatively, Kryo is significantly faster and more compact than
+Java serialization (often as much as 10x), but does not support all
+Serializable types and requires you to register the classes you’ll use
+in the program in advance for best performance. Since Spark 2.0.0, we
+internally use Kryo serializer when shuffling RDDs with simple types,
+arrays of simple types, or string type.</p>
+<p>To register your own custom classes with Kryo, use the
+registerKryoClasses method. <figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> conf = <span class="keyword">new</span> <span class="constructor">SparkConf()</span>.set<span class="constructor">Master(<span class="operator">...</span>)</span>.set<span class="constructor">AppName(<span class="operator">...</span>)</span></span><br><span class="line">conf.register<span class="constructor">KryoClasses(Array(<span class="params">classOf</span>[MyClass1], <span class="params">classOf</span>[MyClass2])</span>)</span><br><span class="line"><span class="keyword">val</span> sc = <span class="keyword">new</span> <span class="constructor">SparkContext(<span class="params">conf</span>)</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="memory-tuning">Memory tuning</h4>
+<p>By default, Java objects are fast to access, but can easily consume a
+factor of 2-5x more space than the “raw” data inside their fields.</p>
+<p>Memory usage in Spark largely falls under one of two categories:
+<strong>execution</strong> and <strong>storage</strong>. - Execution
+memory: used for computation in shuffles, joins, sorts and aggregations
+- Storage memory: used for caching and propagating internal data across
+the cluster.</p>
+<blockquote>
+<p>When no execution memory is used, storage can acquire all the
+available memory and vice versa. Execution may evict storage if
+necessary, but only until total storage memory usage falls under a
+certain threshold (R).</p>
+</blockquote>
+<h4 id="determining-memory-consumption">Determining Memory
+Consumption</h4>
+<ul>
+<li>The best way to size the amount of memory consumption a dataset will
+require is to create an RDD, put it into cache, and look at the
+“Storage” page in the web UI.</li>
+<li>To estimate the memory consumption of a particular object, use
+SizeEstimator’s estimate method. This is useful for experimenting with
+different data layouts to trim memory usage, as well as determining the
+amount of space a broadcast variable will occupy on each executor
+heap.</li>
+</ul>
+<h4 id="broadcasting-large-variables">Broadcasting Large Variables</h4>
+<p>Using the broadcast functionality available in SparkContext can
+greatly reduce the size of each serialized task, and the cost of
+launching a job over a cluster. If your tasks use any large object from
+the driver program inside of them (e.g. a static lookup table), consider
+turning it into a broadcast variable. In general tasks larger than about
+20 KB are probably worth optimizing.</p>
+<h4 id="data-locality">Data Locality</h4>
+<p>Data locality can have a major impact on the performance of Spark
+jobs. If data and the code that operates on it are together then
+computation tends to be fast. But if code and data are separated, one
+must move to the other. Typically it is faster to ship serialized code
+from place to place than a chunk of data because code size is much
+smaller than data.</p>
+<ul>
+<li>PROCESS_LOCAL data is in the same JVM as the running code. This is
+the best locality possible</li>
+<li>NODE_LOCAL data is on the same node. Examples might be in HDFS on
+the same node, or in another executor on the same node. This is a little
+slower than PROCESS_LOCAL because the data has to travel between
+processes</li>
+<li>NO_PREF data is accessed equally quickly from anywhere and has no
+locality preference</li>
+<li>RACK_LOCAL data is on the same rack of servers. Data is on a
+different server on the same rack so needs to be sent over the network,
+typically through a single switch</li>
+<li>ANY data is elsewhere on the network and not in the same rack</li>
+</ul>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/09/22/interesting-facts-about-scala/" data-toggle="tooltip" data-placement="top" title="Interesting facts about Scala">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/08/14/spark-core-rdd/" data-toggle="tooltip" data-placement="top" title="Spark Core - RDD">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#spark" title="spark">spark</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/ymurong">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/yanchao-murong-b4a97992">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.youtube.com/channel/UCyTFDuBDkgCtFV_4ji4YxZQ">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-youtube fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yanchao&#39;s Blog 2022 
+                    <br>
+                    Theme by <a target="_blank" rel="noopener" href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a target="_blank" rel="noopener" href="http://blog.kaijun.rocks">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://ymurong.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+    <!-- Image to hack wechat -->
+    <img src="https://ymurong.com/img/icon_wechat.png" width="0" height="0" />
+    <!-- Migrate from head to bottom, no longer block render and still work -->
+
+    
+    
+  
+
+</body>
+
+</html>

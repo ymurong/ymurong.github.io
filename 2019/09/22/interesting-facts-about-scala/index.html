@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="keyword"  content="">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>
+        
+          Interesting facts about Scala - Yanchao&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://ymurong.com/2019/09/22/interesting-facts-about-scala/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/css/hux-blog.min.css">
+
+
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Yanchao&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                        <li>
+                            <a href="/archives/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/about.html">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">Tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    
+<!-- Image to hack wechat -->
+<!-- <img src="https://ymurong.com/img/icon_wechat.png" width="0" height="0"> -->
+<!-- <img src="{{ site.baseurl }}/{% if page.header-img %}{{ page.header-img }}{% else %}{{ site.header-img }}{% endif %}" width="0" height="0"> -->
+
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        background-image: url('/img/home-bg.jpg')
+    }
+</style>
+<header class="intro-header" >
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                          <a class="tag" href="/tags/#scala" title="scala">scala</a>
+                        
+                    </div>
+                    <h1>Interesting facts about Scala</h1>
+                    <h2 class="subheading"></h2>
+                    <span class="meta">
+                        Posted by Yanchao MURONG on
+                        2019-09-22
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+    <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>Some interesting facts that I discoverd when I learn Scala.</p>
+</blockquote>
+<h3 id="basics">Basics</h3>
+<h4 id="lazy-keyword">Lazy keyword</h4>
+<p>In scala, the keyword lazy could be very useful if we are refering to
+big resources that we won't need in the first place.</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">import scala<span class="selector-class">.io</span><span class="selector-class">.source</span>._</span><br><span class="line">lazy val info = <span class="built_in">fromFile</span>(<span class="string">&quot;/foo/bar/bigfile&quot;</span>)<span class="selector-class">.mkString</span></span><br><span class="line"><span class="comment">// output -&gt; info: String = &lt;lazy&gt;</span></span><br></pre></td></tr></table></figure>
+<p>As we see here that if we decalre a constant with
+<strong>lazy</strong> keyword, the file won't be loaded into memory
+until the object has been accessed. However, if this file does not
+exist, it is by then we could discover this bug. So make sure to do a
+tradeoff.</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">scala&gt; info</span><br><span class="line">java.io.FileNotFoundException: \foo\bar\bigfile (Le chemin d&#x27;acces specific est introuvable)</span><br><span class="line">  at java.io.<span class="module-access"><span class="module"><span class="identifier">FileInputStream</span>.</span></span>open0(Native Method)</span><br><span class="line">  at java.io.<span class="module-access"><span class="module"><span class="identifier">FileInputStream</span>.</span></span><span class="keyword">open</span>(<span class="module-access"><span class="module"><span class="identifier">FileInputStream</span>.</span></span>java:<span class="number">195</span>)</span><br><span class="line">  at java.io.FileInputStream.&lt;init&gt;(<span class="module-access"><span class="module"><span class="identifier">FileInputStream</span>.</span></span>java:<span class="number">138</span>)</span><br><span class="line">  at scala.io.<span class="module-access"><span class="module"><span class="identifier">Source$</span>.</span></span>from<span class="constructor">File(Source.<span class="params">scala</span>:91)</span></span><br><span class="line">  at scala.io.<span class="module-access"><span class="module"><span class="identifier">Source$</span>.</span></span>from<span class="constructor">File(Source.<span class="params">scala</span>:76)</span></span><br><span class="line">  at scala.io.<span class="module-access"><span class="module"><span class="identifier">Source$</span>.</span></span>from<span class="constructor">File(Source.<span class="params">scala</span>:54)</span></span><br><span class="line">  at .info<span class="constructor">$lzycompute(&lt;<span class="params">console</span>&gt;:14)</span></span><br><span class="line">  at .info(&lt;console&gt;:<span class="number">14</span>)<span class="operator"></span></span><br><span class="line"><span class="operator">  ... </span><span class="number">32</span> elided</span><br></pre></td></tr></table></figure>
+<h3 id="functions">Functions</h3>
+<h4 id="drop-your-return-keyword">Drop your return keyword</h4>
+<p>In a scala function, you don't need to have return explicitely. Scala
+will take the last program line during execution as the return value and
+inferred its type if not specified. Be careful if you have many
+conditionals.</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">def <span class="keyword">add</span>(x:<span class="type">Int</span>, y:<span class="type">Int</span>):<span class="type">Int</span> = &#123;</span><br><span class="line">    x + y  // here <span class="keyword">is</span> the <span class="keyword">return</span> <span class="keyword">value</span>, <span class="keyword">no</span> <span class="keyword">return</span> needed</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">def sayHello(<span class="type">name</span>:String): Unit = &#123;</span><br><span class="line">    // <span class="keyword">if</span> <span class="keyword">return</span> <span class="keyword">type</span> <span class="keyword">is</span> Unit, <span class="keyword">then</span> <span class="keyword">no</span> <span class="keyword">value</span> will be returned </span><br><span class="line">    // Unit <span class="keyword">is</span> equivalent <span class="keyword">to</span> <span class="type">void</span> keyword <span class="keyword">in</span> Java</span><br><span class="line">    println(&quot;Say hello: &quot; + <span class="type">name</span>) </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="number-of-arguments-cloud-be-dynamic">Number of arguments cloud
+be dynamic</h4>
+<p>Well, actually there is nothing new about it. In java, it is called
+<strong>Varargs</strong> which has already been introduced in Java 5.
+And Python also has this feature. Check this scala example below:</p>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">def <span class="built_in">sum</span>(numbers:<span class="built_in">Int</span>*) = &#123;</span><br><span class="line">    var result = <span class="number">0</span></span><br><span class="line">    for(<span class="keyword">number</span> &lt;- numbers) &#123; // numbers is of <span class="keyword">type</span> List[<span class="built_in">Int</span>]</span><br><span class="line">      result += <span class="keyword">number</span></span><br><span class="line">    &#125;</span><br><span class="line">    result</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="oop">OOP</h3>
+<blockquote>
+<p>Refreshing Tip <strong>Encapsulation</strong>: binds together the
+data and functions that manipulate the data, and that keeps both safe
+from outside interference and misuse <strong>Inheritance</strong>: All
+the data and methods available to the parent class also appear in the
+child class with the same names which allows easy re-use of the same
+procedures and datadefinitions <strong>Polymorphism</strong>: Parent
+reference points to Child object</p>
+</blockquote>
+<h4 id="main-constructor-is-right-after-class-name">Main Constructor is
+right after class name</h4>
+<p>Contrary to Java, Scala main constructor is defined right after its
+class name, see below example:</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="symbol">Person</span>(<span class="symbol">val</span> <span class="symbol">name:<span class="symbol">String</span>, <span class="symbol">val</span></span> <span class="symbol">age:<span class="symbol">Int</span></span>) &#123;</span><br><span class="line">  var gender:String = _</span><br><span class="line"></span><br><span class="line">  <span class="comment">// sub-constructor</span></span><br><span class="line">  def <span class="keyword">this</span>(name:String, age:Int, gender:String) &#123;</span><br><span class="line">    <span class="keyword">this</span>(name, age) </span><br><span class="line">    <span class="keyword">this</span>.gender = gender</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="companions-and-apply-function">Companions and Apply
+Function</h4>
+<p>In Scala, an object is a named instance with members such as fields
+and methods. An object and a class that have the same name and which are
+defined in the same source file are known as companions.</p>
+<p>The special Apply Function actually came into usage by some compile
+time sugar. This sugar actually will translates Object() into
+Object.apply(). This could come in handy in servral cases.</p>
+<p>See Example Below:</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> ApplyTest&#123;</span><br><span class="line">  <span class="keyword">def</span> apply() = &#123;</span><br><span class="line">    <span class="keyword">println</span>(<span class="string">&quot;class ApplyTest apply....&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">object ApplyTest&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">println</span>(<span class="string">&quot;Object ApplyTest enter....&quot;</span>)</span><br><span class="line"></span><br><span class="line">  var <span class="keyword">count</span> = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">def</span> incr = &#123;</span><br><span class="line">    <span class="keyword">count</span> = <span class="keyword">count</span> + <span class="number">1</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// best practice: instantiate a class inside object#apply</span></span><br><span class="line">  <span class="keyword">def</span> apply():ApplyTest = &#123;</span><br><span class="line">    <span class="keyword">println</span>(<span class="string">&quot;Object ApplyTest apply....&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 在object中的apply中new class</span></span><br><span class="line">    <span class="keyword">new</span> ApplyTest</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="keyword">println</span>(<span class="string">&quot;Object ApplyTest leave....&quot;</span>)</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">val b = ApplyTest() <span class="comment">// ==&gt; this will call Object#apply</span></span><br><span class="line"><span class="comment">// output =&gt; Object ApplyTest enter....</span></span><br><span class="line"><span class="comment">// output =&gt; Object ApplyTest leave....</span></span><br><span class="line"><span class="comment">// output =&gt; Object ApplyTest apply....</span></span><br><span class="line"></span><br><span class="line">val c = <span class="keyword">new</span> ApplyTest()</span><br><span class="line">c() <span class="comment">// ==&gt; this will call Class#apply</span></span><br><span class="line"><span class="comment">// output =&gt; class ApplyTest apply........</span></span><br></pre></td></tr></table></figure>
+<h4 id="a-class-that-dont-need-new">A class that don't need new</h4>
+<p>In scala, there is a type of class called case class which could be
+used without the keyword new.</p>
+<figure class="highlight isbl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">case</span> <span class="variable">class</span> <span class="function"><span class="title">Dog</span>(<span class="variable">name</span>:<span class="variable">String</span>)</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">println</span>(<span class="title">Dog</span>(<span class="string">&quot;tommy&quot;</span>).name)</span></span><br></pre></td></tr></table></figure>
+<p>// TODO</p>
+<h3 id="collection">Collection</h3>
+<blockquote>
+<p>Refreshing Tip Array, List, Set, Map, Option, Tuple</p>
+</blockquote>
+<h4 id="list-is-a-combination-of-head-and-tail">List is a combination of
+head and tail</h4>
+<p>In scala, one could build a list using head::tail expression.
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">val</span> l1 = <span class="number">1</span>::Nil</span><br><span class="line"><span class="attribute">l1</span>: List[Int] = List(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="attribute">val</span> l4 = <span class="number">1</span>::<span class="number">2</span>::<span class="number">3</span>::Nil</span><br><span class="line"><span class="attribute">l4</span>: List[Int] = List(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>)</span><br></pre></td></tr></table></figure></p>
+<p>As a matter of fact, head is the first element of a list and tail
+reprensents the rest of them. With this feature, one could easily
+calculate the sum of a list without doing a loop. <figure class="highlight scss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">def <span class="built_in">sum</span>(nums:Int*):Int = &#123;</span><br><span class="line">    <span class="built_in">if</span>(nums.length == <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="number">0</span></span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      <span class="comment">// _* turns a list type into Varargs</span></span><br><span class="line">      nums<span class="selector-class">.head</span> + <span class="built_in">sum</span>(nums.tail:_*) </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="functional-feature">Functional Feature</h3>
+<h4 id="currying-function">Currying Function</h4>
+<p>In scala, one could transform a function that takes multiple
+arguments into a function that takes single argument and apply
+caculation partially.</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Curring function declaration </span></span><br><span class="line"><span class="keyword">def</span> add2(a: <span class="keyword">Int</span>) = (b: <span class="keyword">Int</span>) =&gt; a + b</span><br><span class="line"><span class="comment">// or in a more simple way </span></span><br><span class="line"><span class="keyword">def</span> add2(a: <span class="keyword">Int</span>) (b: <span class="keyword">Int</span>) = a + b</span><br><span class="line"><span class="comment">// so that we could call this function like this</span></span><br><span class="line"><span class="keyword">println</span>(add2(<span class="number">2</span>)(<span class="number">3</span>))</span><br><span class="line"><span class="comment">// or like this </span></span><br><span class="line">val sum=add2(<span class="number">2</span>)_</span><br><span class="line"><span class="keyword">println</span>(sum(<span class="number">3</span>))</span><br></pre></td></tr></table></figure>
+<h4 id="higher-order-functions">Higher-order functions</h4>
+<blockquote>
+<p>Map, filter, take, flatten, flatmap, foreach, reduce, fold ...</p>
+</blockquote>
+<ol type="1">
+<li><p>Map: operate each elements of a collection
+<figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">val l = List(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>)</span><br><span class="line">l.<span class="built_in">map</span>(<span class="function"><span class="params">x</span> =&gt;</span> x * <span class="number">2</span>)</span><br><span class="line"><span class="comment">// or more simply</span></span><br><span class="line">l.<span class="built_in">map</span>(_ * <span class="number">2</span>)</span><br><span class="line"><span class="comment">// output =&gt; List(2,4,6,8,10)</span></span><br></pre></td></tr></table></figure></p></li>
+<li><p>Reduce: takes all the elements in a collection and combines them
+using a binary operation to produce a single value
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> l = <span class="constructor">List(1,2,3,4,5)</span></span><br><span class="line"></span><br><span class="line">l.reduce(_ - _)</span><br><span class="line">res0: Int = -<span class="number">13</span></span><br><span class="line"></span><br><span class="line">l.reduce<span class="constructor">Left(<span class="params">_</span> - <span class="params">_</span>)</span></span><br><span class="line">res1: Int = -<span class="number">13</span></span><br><span class="line"><span class="comment">// (((1-2)-3)-4)-5</span></span><br><span class="line"></span><br><span class="line">l.reduce<span class="constructor">Right(<span class="params">_</span> - <span class="params">_</span>)</span></span><br><span class="line">res2: Int = <span class="number">3</span></span><br><span class="line"><span class="comment">// 1-(2-(3-(4-5)))</span></span><br></pre></td></tr></table></figure></p></li>
+<li><p>Fold: like reduce but allow an initial value
+<figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">val l = List(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">l.fold(<span class="number">0</span>)(<span class="literal">_</span> - <span class="literal">_</span>)</span><br><span class="line">res0: <span class="type">Int </span>= <span class="number">-15</span></span><br><span class="line"></span><br><span class="line">l.foldLeft(<span class="number">0</span>)(<span class="literal">_</span> - <span class="literal">_</span>)</span><br><span class="line">res1: <span class="type">Int </span>= <span class="number">-15</span></span><br><span class="line"><span class="comment">// ((((0-1)-2)-3)-4)-5</span></span><br><span class="line"></span><br><span class="line">l.foldRight(<span class="number">0</span>)(<span class="literal">_</span> - <span class="literal">_</span>)</span><br><span class="line">res2: <span class="type">Int </span>= <span class="number">3</span></span><br><span class="line"><span class="comment">// 1-(2-(3-(4-(5-0))))</span></span><br></pre></td></tr></table></figure></p></li>
+<li><p>Flatmap: Map + Flatten <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">val</span> f = List(List(<span class="number">1</span>,<span class="number">2</span>),List(<span class="number">3</span>,<span class="number">4</span>),List(<span class="number">5</span>,<span class="number">6</span>))</span><br><span class="line"></span><br><span class="line"><span class="attribute">f</span>.flatten</span><br><span class="line"><span class="attribute">res16</span>: List[Int] = List(<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>)</span><br><span class="line"></span><br><span class="line"><span class="attribute">f</span>.map(_.map(_*<span class="number">2</span>))</span><br><span class="line"><span class="attribute">res17</span>: List[List[Int]] = List(List(<span class="number">2</span>, <span class="number">4</span>), List(<span class="number">6</span>, <span class="number">8</span>), List(<span class="number">10</span>, <span class="number">12</span>))</span><br><span class="line"></span><br><span class="line"><span class="attribute">f</span>.flatMap(_.map(_*<span class="number">2</span>))</span><br><span class="line"><span class="attribute">res18</span>: List[Int] = List(<span class="number">2</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">10</span>, <span class="number">12</span>)</span><br></pre></td></tr></table></figure></p></li>
+</ol>
+<p>Refer to this <a
+target="_blank" rel="noopener" href="https://blog.ymurong.com/archives/spark-core-rdd#word-count">word
+count example</a>, which is a typical usage of flatMap in Spark.</p>
+<h4 id="partial-functions">Partial functions</h4>
+<p>A partial function is a function that is not defined for all possible
+arguments of the specified type. Typically in scala, it is just like a
+match-case pattern without the match.</p>
+<figure class="highlight dart"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// A Input Type    B OutputType</span></span><br><span class="line">def say:PartialFunction[<span class="built_in">String</span>,<span class="built_in">String</span>] = &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&quot;Akiho Yoshizawa&quot;</span> =&gt; <span class="string">&quot;oh..&quot;</span></span><br><span class="line">    <span class="keyword">case</span> <span class="string">&quot;YuiHatano&quot;</span>  =&gt; <span class="string">&quot;oh.....&quot;</span></span><br><span class="line">    <span class="keyword">case</span> _ =&gt; <span class="string">&quot;Really.....&quot;</span></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<h3 id="implicit-conversion">Implicit conversion</h3>
+<p>In java, when we want to enrich some object, to add some method etc.
+sometimes we will turn to Dynamic Proxy. Similarly, in scala, one could
+atrieve the same objective by doing an implicit conversion.</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="constructor">Man(<span class="params">val</span> <span class="params">name</span>: String)</span> &#123;</span><br><span class="line">  def eat<span class="literal">()</span>: Unit = &#123;</span><br><span class="line">    println(s<span class="string">&quot;man[ $name ] eat ..... &quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="constructor">Superman(<span class="params">val</span> <span class="params">name</span>: String)</span> &#123;</span><br><span class="line">  def fly<span class="literal">()</span>: Unit = &#123;</span><br><span class="line">    println(s<span class="string">&quot;superman[ $name ] fly ..... &quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">implicit def man2superman(man:Man):Superman = <span class="keyword">new</span> <span class="constructor">Superman(<span class="params">man</span>.<span class="params">name</span>)</span></span><br><span class="line"><span class="keyword">val</span> man = <span class="keyword">new</span> <span class="constructor">Man(<span class="string">&quot;PK&quot;</span>)</span></span><br><span class="line">man.fly<span class="literal">()</span></span><br></pre></td></tr></table></figure>
+<h4 id="implicit-parameter">Implicit Parameter</h4>
+<p>A method with implicit parameters can be applied to arguments just
+like a normal method. In this case the implicit label has no effect.
+However, if such a method misses arguments for its implicit parameters,
+such arguments will be automatically provided. This is not really
+recommmended in production.</p>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">implicit</span> val test = <span class="string">&quot;test&quot;</span></span><br><span class="line"></span><br><span class="line">def main(args: Array[String]): <span class="keyword">Unit</span> = &#123;</span><br><span class="line">	</span><br><span class="line">  def testParam(<span class="keyword">implicit</span> <span class="keyword">name</span>:String): <span class="keyword">Unit</span> = &#123;</span><br><span class="line">    println(<span class="keyword">name</span> + <span class="string">&quot;~~~~~~~~~~~~&quot;</span>)</span><br><span class="line">  &#125;</span><br><span class="line">  testParam // scala will take test as <span class="keyword">implicit</span> <span class="keyword">parameter</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="implicit-class">Implicit Class</h4>
+<p>Implicit class will enrich a method for input parameter type. This is
+not really recommmended in production. <figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">implicit</span> <span class="keyword">class</span> Calculator(x:<span class="built_in">Int</span>) &#123;</span><br><span class="line">    def add(a:<span class="built_in">Int</span>) = a + x</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">println(<span class="number">12.</span>add(<span class="number">3</span>))</span><br></pre></td></tr></table></figure></p>
+
+
+                <hr>
+
+                
+
+                <ul class="pager">
+                    
+                        <li class="previous">
+                            <a href="/2019/10/15/use-scala-in-springboot-application/" data-toggle="tooltip" data-placement="top" title="Use Scala in Springboot Application">&larr; Previous Post</a>
+                        </li>
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/08/15/spark-core-intro/" data-toggle="tooltip" data-placement="top" title="Spark Core - Intro">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                
+
+                
+
+            </div>
+    <!-- Side Catalog Container -->
+        
+
+    <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#scala" title="scala">scala</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'always',
+          placement: 'right',
+          icon: '#'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/ymurong">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.linkedin.com/in/yanchao-murong-b4a97992">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-linkedin fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://www.youtube.com/channel/UCyTFDuBDkgCtFV_4ji4YxZQ">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-youtube fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; Yanchao&#39;s Blog 2022 
+                    <br>
+                    Theme by <a target="_blank" rel="noopener" href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    Ported by <a target="_blank" rel="noopener" href="http://blog.kaijun.rocks">Kaijun</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=kaijun&repo=hexo-theme-huxblog&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://ymurong.com/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Side Catalog -->
+
+
+
+
+
+    <!-- Image to hack wechat -->
+    <img src="https://ymurong.com/img/icon_wechat.png" width="0" height="0" />
+    <!-- Migrate from head to bottom, no longer block render and still work -->
+
+    
+    
+  
+
+</body>
+
+</html>
