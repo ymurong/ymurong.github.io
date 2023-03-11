@@ -1,4 +1,4 @@
-https://ymurong.com/2023/03/11/SQL-vs-NO-SQL/
+https://ymurong.com/2022/03/11/SQL-vs-NO-SQL/
 https://ymurong.com/about/about.html
 https://ymurong.com/archives/index.html
 https://ymurong.com/2019/07/18/jvm-memory-model-and-gc/
