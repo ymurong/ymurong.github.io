@@ -2,6 +2,87 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://ymurong.com/2021/10/30/web-performance-fundamentals/</loc>
+    
+    <lastmod>2023-03-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://ymurong.com/2021/09/01/statisticswithpython2-parametricsignificancetests-anova1/</loc>
+    
+    <lastmod>2023-03-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://ymurong.com/2021/09/10/statisticswithpython2-parametricsignificancetests-twowayanova/</loc>
+    
+    <lastmod>2023-03-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://ymurong.com/2021/08/25/statisticswithpython1-parametricsignificancetests/</loc>
+    
+    <lastmod>2023-03-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://ymurong.com/2020/10/14/machine-learning-with-python1-linear-regression/</loc>
+    
+    <lastmod>2023-03-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://ymurong.com/2019/08/15/spark-core-intro/</loc>
+    
+    <lastmod>2023-03-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://ymurong.com/2020/07/13/kubernetes-for-newbies/</loc>
+    
+    <lastmod>2023-03-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://ymurong.com/2019/07/07/socket-transfer-sticky-lost-package-problem-solution/</loc>
+    
+    <lastmod>2023-03-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://ymurong.com/2019/07/18/jvm-memory-model-and-gc/</loc>
+    
+    <lastmod>2023-03-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://ymurong.com/about/about.html</loc>
     
     <lastmod>2023-03-11</lastmod>
@@ -12,15 +93,6 @@
   
   <url>
     <loc>https://ymurong.com/2019/07/16/Model-file-transfer-vs-message-transfer-and-framing-model/</loc>
-    
-    <lastmod>2023-03-10</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://ymurong.com/2019/07/07/socket-transfer-sticky-lost-package-problem-solution/</loc>
     
     <lastmod>2023-03-10</lastmod>
     
@@ -47,25 +119,7 @@
   </url>
   
   <url>
-    <loc>https://ymurong.com/2021/09/10/statisticswithpython2-parametricsignificancetests-twowayanova/</loc>
-    
-    <lastmod>2022-08-04</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://ymurong.com/2019/10/15/use-scala-in-springboot-application/</loc>
-    
-    <lastmod>2022-08-04</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://ymurong.com/2021/10/30/web-performance-fundamentals/</loc>
     
     <lastmod>2022-08-04</lastmod>
     
@@ -110,42 +164,6 @@
   </url>
   
   <url>
-    <loc>https://ymurong.com/2019/08/15/spark-core-intro/</loc>
-    
-    <lastmod>2022-08-04</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://ymurong.com/2020/10/14/machine-learning-with-python1-linear-regression/</loc>
-    
-    <lastmod>2022-08-04</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://ymurong.com/2021/08/25/statisticswithpython1-parametricsignificancetests/</loc>
-    
-    <lastmod>2022-08-04</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://ymurong.com/2021/09/01/statisticswithpython2-parametricsignificancetests-anova1/</loc>
-    
-    <lastmod>2022-08-04</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://ymurong.com/2019/05/23/Hexo-Documentation/</loc>
     
     <lastmod>2022-08-04</lastmod>
@@ -174,24 +192,6 @@
   
   <url>
     <loc>https://ymurong.com/2021/11/21/javascript-the-recent-parts/</loc>
-    
-    <lastmod>2022-08-04</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://ymurong.com/2019/07/18/jvm-memory-model-and-gc/</loc>
-    
-    <lastmod>2022-08-04</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://ymurong.com/2020/07/13/kubernetes-for-newbies/</loc>
     
     <lastmod>2022-08-04</lastmod>
     
