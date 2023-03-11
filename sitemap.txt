@@ -1,6 +1,6 @@
+https://ymurong.com/2022/07/16/SQL-vs-NO-SQL/
 https://ymurong.com/2023/03/11/pytorch-tricky-api/
 https://ymurong.com/about/about.html
-https://ymurong.com/2022/03/11/SQL-vs-NO-SQL/
 https://ymurong.com/2021/08/25/statisticswithpython1-parametricsignificancetests/
 https://ymurong.com/2021/09/01/statisticswithpython2-parametricsignificancetests-anova1/
 https://ymurong.com/2020/10/14/machine-learning-with-python1-linear-regression/
