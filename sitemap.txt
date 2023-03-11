@@ -1,3 +1,4 @@
+https://ymurong.com/2023/03/11/SQL-vs-NO-SQL/
 https://ymurong.com/about/about.html
 https://ymurong.com/archives/index.html
 https://ymurong.com/2019/07/18/jvm-memory-model-and-gc/
@@ -36,3 +37,4 @@ https://ymurong.com/tags/machine-learning/
 https://ymurong.com/tags/statistics/
 https://ymurong.com/tags/performance/
 https://ymurong.com/tags/data-transmission/
+https://ymurong.com/tags/database/
