@@ -397,11 +397,11 @@ we show them on our admin UI)</li>
 </ul></li>
 <li>Tooling (Python)
 <ul>
-<li>File transfer tool
+<li>Event Driven File Transfer Agent
 <ul>
 <li>Agent will listen to PubSub's queue (new file arrival), push to
-local queue and use ThreadPoolExecutor to run file transfer jobs and ack
-when transfer is done correctly</li>
+local queue and use ThreadPoolExecutor to run file transfer jobs
+(Rclone) and ack when transfer is done correctly</li>
 <li>Transfer records would be stored/updated in database and shown in UI
 (useful for debugging purpose)</li>
 </ul></li>
