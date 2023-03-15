@@ -18,7 +18,6 @@ https://ymurong.com/2021/10/24/you-dont-know-js-notes-1/
 https://ymurong.com/2021/11/05/you-dont-know-js-notes-3-objects-prototypes/
 https://ymurong.com/2021/10/28/you-dont-know-js-notes2-scopes/
 https://ymurong.com/2019/08/14/spark-core-rdd/
-https://ymurong.com/2019/05/23/Hexo-Documentation/
 https://ymurong.com/2019/09/22/interesting-facts-about-scala/
 https://ymurong.com/2021/11/04/graphql-basics/
 https://ymurong.com/2021/11/21/javascript-the-recent-parts/
