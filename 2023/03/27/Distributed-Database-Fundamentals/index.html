@@ -13,11 +13,11 @@
 
     <title>
         
-          Data Quality What &amp; Why &amp; How - Yanchao&#39;s Blog
+          Distributed Database Fundamentals - Yanchao&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="https://ymurong.com/2023/03/26/Data-Quality-What-Why-How/">
+    <link rel="canonical" href="https://ymurong.com/2023/03/27/Distributed-Database-Fundamentals/">
 
     <!-- Bootstrap Core CSS -->
     
@@ -175,14 +175,14 @@
                 <div class="post-heading">
                     <div class="tags">
                         
-                          <a class="tag" href="/tags/#data engineering" title="data engineering">data engineering</a>
+                          <a class="tag" href="/tags/#data-engineering" title="data-engineering">data-engineering</a>
                         
                     </div>
-                    <h1>Data Quality What &amp; Why &amp; How</h1>
+                    <h1>Distributed Database Fundamentals</h1>
                     <h2 class="subheading"></h2>
                     <span class="meta">
                         Posted by Yanchao MURONG on
-                        2023-03-26
+                        2023-03-27
                     </span>
                 </div>
             </div>
@@ -202,327 +202,273 @@
                 post-container">
 
                 <ul>
-<li><a href="#why-is-data-quality-important">Why is Data Quality
-Important</a></li>
-<li><a href="#real-world-data">Real World Data</a></li>
-<li><a href="#changes-in-data-collection-strategies">Changes in Data
-Collection Strategies</a>
+<li><a href="#distributed-database-fundamentals">Distributed Database
+Fundamentals</a>
 <ul>
-<li><a href="#pre-internet-era">Pre-Internet Era</a></li>
-<li><a href="#internet-era">Internet Era</a></li>
-</ul></li>
-<li><a href="#sources-of-errors">Sources of Errors</a></li>
-<li><a href="#dimensions-of-quality">Dimensions of Quality</a></li>
-<li><a href="#how-to-improve-data-quality">How to improve Data
-Quality</a>
+<li><a href="#what">What</a></li>
+<li><a href="#why">Why</a></li>
+<li><a href="#how-do-we-classify-distributed-databases">How do we
+classify distributed databases</a>
 <ul>
-<li><a href="#data-entry-interface-design">Data entry interface
-design</a></li>
-<li><a href="#organizational-management">Organizational
-management</a></li>
-<li><a href="#automated-data-auditing-and-data-cleaning">Automated data
-auditing and data cleaning</a></li>
-<li><a href="#exploratory-data-analysis-and-dat-cleaning">Exploratory
-data analysis and dat cleaning</a></li>
-</ul></li>
-<li><a href="#data-cleaning---types-and-techniques">Data Cleaning -
-Types and Techniques</a>
-<ul>
-<li><a href="#quantitative">Quantitative</a></li>
-<li><a href="#categorical">Categorical</a></li>
-<li><a href="#postal-addesses">Postal Addesses</a></li>
-<li><a href="#keys--identifiers">keys / Identifiers</a></li>
-</ul></li>
-<li><a href="#the-need-for-a-human-in-the-loop">The need for a
-"Human-in-the-loop"</a>
-<ul>
-<li><a href="#unrealistic-assumption">Unrealistic assumption</a></li>
-<li><a href="#in-practice">In practice</a></li>
-</ul></li>
-<li><a href="#cleaning-techniques">Cleaning Techniques</a>
-<ul>
-<li><a href="#quantitative-data">Quantitative Data</a></li>
-<li><a href="#categorical-data">Categorical Data</a>
-<ul>
-<li><a href="#normalization-of-string-data">Normalization of String
-data</a>
-<ul>
-<li><a href="#keying-function">Keying function</a></li>
-</ul></li>
-<li><a href="#candidate-key-detection">Candidate Key Detection</a>
-<ul>
-<li><a href="#unique-row-ratio">unique row ratio</a></li>
-<li><a href="#unique-value-ratio">unique value ratio</a></li>
-</ul></li>
-<li><a href="#missing-value-imputation-with-ml">Missing value
-(Imputation with ML)</a>
-<ul>
-<li><a href="#missing-data">Missing data</a></li>
-<li><a href="#handling-missing-values">Handling missing values</a></li>
-<li><a href="#imputation-problem-as-multi-class">Imputation problem as
-multi-class</a></li>
+<li><a href="#scaling-up-vs-scaling-out">Scaling Up vs Scaling
+Out</a></li>
+<li><a href="#parallel-vs-distributed-databases">Parallel vs Distributed
+Databases</a></li>
+<li><a href="#analytical-vs-operational-databases">Analytical vs
+Operational Databases</a></li>
+<li><a href="#architecture">Architecture</a></li>
 </ul></li>
 </ul></li>
+<li><a href="#distributed-query-processing">Distributed Query
+Processing</a>
+<ul>
+<li><a href="#data-shuffling-primitives-partitions">Data Shuffling
+Primitives (Partitions)</a>
+<ul>
+<li><a href="#broadcasting">Broadcasting</a></li>
+<li><a href="#range-partitioning">Range Partitioning</a></li>
+<li><a href="#hash-partitioning">Hash Partitioning</a></li>
+<li><a href="#distributed-selection--projection">Distributed Selection /
+Projection</a></li>
+<li><a href="#distributed-groupby--aggregation">Distributed GroupBy /
+Aggregation</a></li>
+<li><a href="#distributed-joins">Distributed Joins</a>
+<ul>
+<li><a href="#co-located-join">Co-Located Join</a></li>
+<li><a href="#asymmetric-repartition-join">Asymmetric Repartition
+Join</a></li>
+<li><a href="#symmetric-repartition-join">Symmetric Repartition
+Join</a></li>
+<li><a href="#broadcast-join">Broadcast Join</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="#examples-for-distributed--and-parallel-databases">Examples
+for Distributed (and Parallel) Databases</a></li>
+</ul>
+<h2 id="distributed-database-fundamentals">Distributed Database
+Fundamentals</h2>
+<h3 id="what">What</h3>
+<ul>
+<li>A distributed database is a database that is spread (“distributed”)
+across multiple machines.<br />
+</li>
+<li>For an end-user, interacting with a distributed database should be
+indistinguishable from a non-distributed one.</li>
+</ul>
+<h3 id="why">Why</h3>
+<ul>
+<li>Performance
+<ul>
+<li>With data sizes growing exponentially, the need for fast data
+processing is outgrowing individual machines</li>
+</ul></li>
+<li>Elasticity
+<ul>
+<li>The database can be quickly &amp; flexibly scaled to fit the
+requirements by adding (or removing) resources</li>
+</ul></li>
+<li>Fault-Tolerance
+<ul>
+<li>Running on more than one node allows the system to better recover
+from hardware failures</li>
 </ul></li>
 </ul>
-<h1 id="why-is-data-quality-important">Why is Data Quality
-Important</h1>
+<h3 id="how-do-we-classify-distributed-databases">How do we classify
+distributed databases</h3>
+<h4 id="scaling-up-vs-scaling-out">Scaling Up vs Scaling Out</h4>
 <ul>
-<li><p>Impact on organisational decisions (missing or incorrect data can
-result in wrong decision making)</p></li>
-<li><p>Legal obligations in certain business scenarios (e.g., plug type
-information required for selling electric devices in EU)</p></li>
-<li><p>Impact on machine learning models (cleaner data can greatly
-improve model performance)</p></li>
-<li><p>Potential for causing biased decisions in ML-based applications
-(not well understood, area of active research)</p></li>
-<li><p>Operational stability: missing and inconsistent data can cause
-havoc in production systems</p>
+<li>scale up
 <ul>
-<li>Crashes (e.g., due to “NullPointerExceptions” for missing
-attributes)</li>
-<li>Wrong predictions (e.g., change of scale in attributes)</li>
+<li>Move the database to a bigger box<br />
+(faster CPU, more cores, more memory, faster disk, FPGAs/GPUs).</li>
+<li>Typically better performance, but expensive to buy &amp; inflexible
+to scale</li>
+</ul></li>
+<li>scale out
+<ul>
+<li>Distribute the database across multiple nodes.</li>
+<li>Often slower (due to operational overhead), but a lot cheaper, more
+flexible, and more fault-tolerant.</li>
 </ul></li>
 </ul>
-<h1 id="real-world-data">Real World Data</h1>
+<h4 id="parallel-vs-distributed-databases">Parallel vs Distributed
+Databases</h4>
 <ul>
-<li>Constantly changing</li>
-<li>Often hundreds of attributes</li>
-<li>Data originates from multiple sources / people / teams /
+<li>Parallel Database
+<ul>
+<li>Runs on tightly-coupled nodes (e.g. a cluster, or a multi-processor
+/ multi-core system)</li>
+<li>Typically a scale-up architecture.</li>
+</ul></li>
+<li>Distributed Database
+<ul>
+<li>Runs on loosely-coupled nodes (e.g. individual machines, cloud
+resources)</li>
+<li>Typically a scale-out architecture.</li>
+</ul></li>
+</ul>
+<p>Most distributed databases are also parallel</p>
+<h4 id="analytical-vs-operational-databases">Analytical vs Operational
+Databases</h4>
+<ul>
+<li>Online Analytical Processing (OLAP)
+<ul>
+<li>Focus on a few, complex, long-running analytical queries</li>
+</ul></li>
+<li>Online Transactional Processing (OLTP)
+<ul>
+<li>Focus on multiple concurrent, simple, short-running transactional
+queries</li>
+</ul></li>
+</ul>
+<h4 id="architecture">Architecture</h4>
+<ul>
+<li>Shared Memory
+<ul>
+<li>All nodes have shared access to both memory &amp; disk</li>
+<li>Typical architecture found in scale-up, parallel databases</li>
+<li>Can achieve very high performance, but is hard to scale when running
+out of resources</li>
+<li>Postgres, Oracle, SQL Server •Main-Memory DBMS like Apache Ignite,
+Hyper, SAP Hana</li>
+</ul></li>
+<li>Shared Disk
+<ul>
+<li>Nodes have their own CPU &amp; memory, but share the same disk</li>
+<li>Most commonly found in traditional, enterprise-grade RDBMs
 systems</li>
-<li>Several potentially inconsistent copies</li>
-<li>Often too large to conveniently handle on a desktop machine</li>
-<li>Often difficult to access (e.g., data compressed and partitioned in
-a distributed filesystem)</li>
-</ul>
-<h1 id="changes-in-data-collection-strategies">Changes in Data
-Collection Strategies</h1>
-<h2 id="pre-internet-era">Pre-Internet Era</h2>
-<ul>
-<li>Data initially collected in transactional, relational databases</li>
-<li>Data Modelled before collection</li>
-<li>Backward-looking analysis of well understood business data</li>
-</ul>
-<h2 id="internet-era">Internet Era</h2>
-<ul>
-<li>Collect first, analyze later</li>
-<li>Vast amount of semi-structured data (images, text, audio)</li>
-<li>New data stores (k-v, document, file system: data lakes)
-<ul>
-<li>relaxed consistency (as no distributed transactions)</li>
-<li>enforce few modelling decisions at collection time</li>
-<li>schema-on-road: application must interpret the data</li>
+<li>(Oracle, MS SQL Server)</li>
 </ul></li>
-<li>Storage costs decreased</li>
-<li>Data becomes valuable as input to ML-based applications</li>
-</ul>
-<h1 id="sources-of-errors">Sources of Errors</h1>
+<li>Shared Nothing
 <ul>
-<li>Data Entry errors
+<li>Data is spread across independent nodes that only communicate via
+the network (Enterprise Mainframe with NAS (network-attached
+storage))</li>
+<li>Typical architecture found in “web-scale”, scale-out systems:
 <ul>
-<li>Typos in Forms</li>
-<li>Different spellings for the same real-world entity</li>
+<li>Dataflow systems like Apache Hadoop / Spark / Flink</li>
+<li>Distributed Databases, Key-Value Stores / snowflake</li>
 </ul></li>
-<li>Measurement errors
-<ul>
-<li>outside interference in measurement process</li>
-<li>configuration/placement of sensors changed
-<ul>
-<li>e-commerce -&gt; mobile network instability</li>
-</ul></li>
-</ul></li>
-<li>Distillation errors
-<ul>
-<li>errors in data summaries (logarithm)</li>
-<li>editorial bias in data summaries</li>
-</ul></li>
-<li>Data integration errors
-<ul>
-<li>Resolution of inconsistencies w.r.t duplicate entries</li>
-<li>unification of units, measurement periods</li>
+<li>Robust architecture that offers availability &amp; scalability, but
+can be slower than shared-memory</li>
 </ul></li>
 </ul>
-<h1 id="dimensions-of-quality">Dimensions of Quality</h1>
+<h2 id="distributed-query-processing">Distributed Query Processing</h2>
+<h3 id="data-shuffling-primitives-partitions">Data Shuffling Primitives
+(Partitions)</h3>
+<h4 id="broadcasting">Broadcasting</h4>
 <ul>
-<li>Completeness
+<li>Each node sends a copy of all their data to all other nodes</li>
+</ul>
+<h4 id="range-partitioning">Range Partitioning</h4>
 <ul>
-<li>Degree to which data required to describe a real-world object is
-available</li>
+<li>Each node receives a predefined range of the key space</li>
+<li>may have unbalanced distribution of data</li>
+<li>each nodes needs to know the ranging</li>
+</ul>
+<h4 id="hash-partitioning">Hash Partitioning</h4>
+<ul>
+<li>Each node receives a portion of the key space<br />
+determined by a hash function</li>
+<li>each node does not need to known the ranging (hash function
+enough)</li>
+</ul>
+<h4 id="distributed-selection-projection">Distributed Selection /
+Projection</h4>
+<p>No need to shuffle <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> col<span class="operator">+</span><span class="number">1</span> <span class="keyword">WHERE</span> col <span class="operator">&gt;</span> <span class="number">4</span></span><br></pre></td></tr></table></figure></p>
+<h4 id="distributed-groupby-aggregation">Distributed GroupBy /
+Aggregation</h4>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> col, <span class="built_in">COUNT</span>(<span class="operator">*</span>) <span class="keyword">GROUP</span> <span class="keyword">BY</span> col</span><br></pre></td></tr></table></figure>
+<ul>
+<li>each node has the hash function so they know data should be sent to
+which node based on that hash function (tuples of the same key would be
+sent to the same node)</li>
+<li>Hash partition on grouping key to collect all tuples with same key
+(each node will receive all tuples of the same key thanks to hashing
+function)</li>
+<li>Compute aggregation locally on each node</li>
+</ul>
+<h4 id="distributed-joins">Distributed Joins</h4>
+<ul>
+<li>Shuffle data around to ensure that matching pairs are on the same
+node</li>
+<li>Then run a local join algorithm</li>
+</ul>
+<p><strong>Optimal strategy</strong> depends on: - How data is
+partitioned / distributed across the nodes - The size of the individual
+tables</p>
+<h5 id="co-located-join">Co-Located Join</h5>
+<ul>
+<li>both tables are partitioned by the join keys</li>
+</ul>
+<h5 id="asymmetric-repartition-join">Asymmetric Repartition Join</h5>
+<ul>
+<li>If only one of the tables is partitioned by the join key:</li>
+<li>hash-partition the other one by the join key, run join locally</li>
+</ul>
+<h5 id="symmetric-repartition-join">Symmetric Repartition Join</h5>
+<ul>
+<li>the tables are partitioned differently</li>
+<li>If both tables are roughly the same size, then we hash-partition
+both by the join key, then run the join locally</li>
+</ul>
+<h5 id="broadcast-join">Broadcast Join</h5>
+<ul>
+<li>the tables are partitioned differently</li>
+<li>but one table is a lot smaller than the other</li>
+<li>broadcast the small table, then run the join locally</li>
+</ul>
+<h2 id="examples-for-distributed-and-parallel-databases">Examples for
+Distributed (and Parallel) Databases</h2>
+<ul>
+<li>In-Memory Database
+<ul>
+<li>Scale-up, shared-memory, parallel database engine</li>
+<li>analytical purpose</li>
+<li>Focus on CPU efficiency / multi-threading</li>
+<li>Typical applications are time-critical systems
+<ul>
+<li>Real-time systems, Critical Business Intelligence Solutions,
+Dashboarding Backends, Trading Systems, ...</li>
 </ul></li>
-<li>Consistency: Intra-Relation constraints
-<ul>
-<li>Specific data type, interval for a numerical column, set of values
-for a categorical column</li>
+<li>SAP Hana, Hyper, Apache Ignite</li>
 </ul></li>
-<li>Consistency: Inter-Relation constraints
+<li>Distributed Key-Value Stores
 <ul>
-<li>Validity of references to other data entries (foreign keys)</li>
+<li>Scale-out, shared-nothing, distributed, operational database
+engine</li>
+<li>Focus on fault-tolerance and transaction speed</li>
+<li>Amazon DynamoDB, Apache Cassandra, FoundationDB</li>
 </ul></li>
-<li>Syntactic Accuracy
+<li>Data Warehousing Systems
 <ul>
-<li>red, blue ... (syntactically correct but not match real value)</li>
+<li>Shared-nothing, scale-out, distributed, analytical database
+engine</li>
+<li>Typical use cases are Business Intelligence (BI), Reporting,
+Operational Management, ...</li>
+<li>Redshift, Teradata, Vertica, Oracle Exadata, Postgres</li>
 </ul></li>
-<li>Semantic Accuracy
+<li>Cloud RDBMs
 <ul>
-<li>XL, red ... (match real-world representation)</li>
+<li>Architectural evolution of Data Warehousing Systems for modern Cloud
+Environments</li>
+<li>Builds on Shared Nothing, but keeps data in cloud storage
+<ul>
+<li>Nodes do not “own” data, they only access what they need to process
+the query from cloud storage.</li>
+<li>Transactions and access consistency are handled centrally via a
+distributed key value store. ????????</li>
 </ul></li>
-</ul>
-<h1 id="how-to-improve-data-quality">How to improve Data Quality</h1>
-<h2 id="data-entry-interface-design">Data entry interface design</h2>
+<li>focus on extreme elasticity
 <ul>
-<li>Enforce Integrity constraints (e.g. constraints on numeric values,
-referential integrity)</li>
-<li>Caveat: can force users to "invent" dirty data (still need to care
-about it)</li>
-</ul>
-<h2 id="organizational-management">Organizational management</h2>
-<ul>
-<li>Streamlining of processes for data collection and analysis (capture
-error earlier)</li>
-<li>Capturing of provenance and metadata</li>
-</ul>
-<h2 id="automated-data-auditing-and-data-cleaning">Automated data
-auditing and data cleaning</h2>
-<ul>
-<li>Application of automated techniques to identify and rectify data
-errors</li>
-</ul>
-<h2 id="exploratory-data-analysis-and-dat-cleaning">Exploratory data
-analysis and dat cleaning</h2>
-<ul>
-<li>human in the loop approach necessary most of the time</li>
-<li>interaction between data viz and data cleaning iterative
-process</li>
-</ul>
-<h1 id="data-cleaning---types-and-techniques">Data Cleaning - Types and
-Techniques</h1>
-<h2 id="quantitative">Quantitative</h2>
-<ul>
-<li>integers or floating numbers in different shapes (sets, tensors,
-time series)</li>
-<li>challenges: unit conversion (especially for volatile units like
-currency)</li>
-<li>foundation of cleaning techniques: outlier detection ##
-Categorical</li>
-<li>names or codes to assign data into groups, no ordering or distance
-defined</li>
-<li>common problem: misspelling upon data entry</li>
-<li>foundation of cleaning techniques: normalization/deduplcation</li>
-</ul>
-<h2 id="postal-addesses">Postal Addesses</h2>
-<ul>
-<li>special case of categorical data, typically entered as free
-text</li>
-<li>deduplication</li>
-</ul>
-<h2 id="keys-identifiers">keys / Identifiers</h2>
-<ul>
-<li>ensure referential integrity</li>
-</ul>
-<h1 id="the-need-for-a-human-in-the-loop">The need for a
-"Human-in-the-loop"</h1>
-<h2 id="unrealistic-assumption">Unrealistic assumption</h2>
-<ul>
-<li>existence of error detecting rules assumed: integrity constraints,
-functional dependencies</li>
-<li>focus on most efficient and accurate way to apply cleaning steps
-according to rules</li>
-</ul>
-<h2 id="in-practice">In practice</h2>
-<ul>
-<li>EDA + Viz + cleaning</li>
-<li>Iterative approach</li>
-<li>Open Refine, Trifacta (Alteryx)</li>
-</ul>
-<h1 id="cleaning-techniques">Cleaning Techniques</h1>
-<h2 id="quantitative-data">Quantitative Data</h2>
-<ul>
-<li>Robust Univariate Outlier Detection
-<ul>
-<li>Robust Centers (robust statistics are closer then median)
-<ul>
-<li>Median</li>
-<li>K-trimmed mean</li>
-</ul></li>
-<li>Robust Dispersion
-<ul>
-<li>MAD (median absolute deviation)
-<ul>
-<li>measures median distance of all values from the sample median</li>
-</ul></li>
+<li>Cloud Resources are “infinite”, can be provisioned within
+seconds.</li>
+<li>Allows accessing the data from 1000s of nodes concurrently.</li>
+<li>Scale resources up &amp; down exactly as and when needed.</li>
 </ul></li>
 </ul></li>
 </ul>
-<h2 id="categorical-data">Categorical Data</h2>
-<h3 id="normalization-of-string-data">Normalization of String data</h3>
-<ul>
-<li>Different spellings (Jerome vs Jerome)</li>
-<li>Different punctuation (ACME Inc. vs ACME, Inc)</li>
-<li>Typos (Alice-&gt;Ailce)</li>
-<li>Misunderstandings (Rupert -&gt; Robert)</li>
-</ul>
-<h4 id="keying-function">Keying function</h4>
-<ul>
-<li>Use keying function to form cluster with the computed key</li>
-<li>Automatic repair
-<ul>
-<li>replace all strings in a cluster with the string with the highest
-cardinality S(s) in S</li>
-</ul></li>
-<li>Manual repair (OpenRefine implementation)
-<ul>
-<li>show clusters and stats to user</li>
-<li>have user decide about replacement</li>
-</ul></li>
-</ul>
-<h3 id="candidate-key-detection">Candidate Key Detection</h3>
-<h4 id="unique-row-ratio">unique row ratio</h4>
-<ul>
-<li>number of distinct value / total number of rows</li>
-<li>problem: frequency outliers (lots of frequent -999)
-<ul>
-<li>often caused by UIs forcing users to invent common dummy values like
-0000 or -999 #### unique value ratio</li>
-</ul></li>
-<li>number of unique value (only occur once) / number of distinct
-value</li>
-</ul>
-<h3 id="missing-value-imputation-with-ml">Missing value (Imputation with
-ML)</h3>
-<h4 id="missing-data">Missing data</h4>
-<ul>
-<li>Missing Completely at Random (MCAR)
-<ul>
-<li>as if we lost some entries by chance</li>
-</ul></li>
-<li>Missing at Random (MAR)
-<ul>
-<li>missingness depends on observed job type</li>
-<li>engineers more likely to not share income than managers</li>
-</ul></li>
-<li>Not Missing at Random (NMAR)
-<ul>
-<li>missingness data depends on missing data itself</li>
-<li>people with low income do not want to share this information</li>
-</ul></li>
-</ul>
-<h4 id="handling-missing-values">Handling missing values</h4>
-<ul>
-<li>remove examples with missing attributes</li>
-<li>placeholder symbol for categorical missing values</li>
-<li>impute missing values - with mode or mean of the observed values in
-the column</li>
-</ul>
-<h4 id="imputation-problem-as-multi-class">Imputation problem as
-multi-class</h4>
-<p>Idea: Treat imputation problem as multi-class classification problem
-- Tool: <a target="_blank" rel="noopener" href="https://github.com/awslabs/datawig">Datawig</a> - use
-rows with non-missing data in target columns as training data - encode
-table data from feature columns to a numerical representation - one-hot
-encoding of categorical - standardisation of numerical columns -
-character sequences for textual columns - LSTM (trained encoder output)/
-n-gram hashing (frequency based - tfidf)</p>
-<p><img src="./imputation.png" /></p>
 
 
                 <hr>
@@ -531,13 +477,9 @@ n-gram hashing (frequency based - tfidf)</p>
 
                 <ul class="pager">
                     
-                        <li class="previous">
-                            <a href="/2023/03/27/Distributed-Database-Fundamentals/" data-toggle="tooltip" data-placement="top" title="Distributed Database Fundamentals">&larr; Previous Post</a>
-                        </li>
-                    
                     
                         <li class="next">
-                            <a href="/2023/03/11/pytorch-tricky-api/" data-toggle="tooltip" data-placement="top" title="Pytorch Tricky API">Next Post &rarr;</a>
+                            <a href="/2023/03/26/Data-Quality-What-Why-How/" data-toggle="tooltip" data-placement="top" title="Data Quality What & Why & How">Next Post &rarr;</a>
                         </li>
                     
                 </ul>
@@ -564,7 +506,7 @@ n-gram hashing (frequency based - tfidf)</p>
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#data engineering" title="data engineering">data engineering</a>
+                          <a class="tag" href="/tags/#data-engineering" title="data-engineering">data-engineering</a>
                         
                     </div>
                 </section>

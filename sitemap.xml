@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://ymurong.com/2023/03/27/Distributed-Database-Fundamentals/</loc>
+    
+    <lastmod>2023-03-26</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://ymurong.com/2022/07/16/SQL-vs-NO-SQL/</loc>
     
     <lastmod>2023-03-26</lastmod>
@@ -341,6 +350,13 @@
   
   <url>
     <loc>https://ymurong.com/tags/performance/</loc>
+    <lastmod>2023-03-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ymurong.com/tags/data-engineering/</loc>
     <lastmod>2023-03-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
