@@ -1,3 +1,4 @@
+https://ymurong.com/2022/07/16/SQL-vs-NO-SQL/
 https://ymurong.com/2019/08/14/spark-core-rdd/
 https://ymurong.com/2019/08/15/spark-core-intro/
 https://ymurong.com/2021/10/30/web-performance-fundamentals/
@@ -5,7 +6,6 @@ https://ymurong.com/2020/07/13/kubernetes-for-newbies/
 https://ymurong.com/2020/10/14/machine-learning-with-python1-linear-regression/
 https://ymurong.com/2019/07/07/socket-transfer-sticky-lost-package-problem-solution/
 https://ymurong.com/2019/07/18/jvm-memory-model-and-gc/
-https://ymurong.com/2022/07/16/SQL-vs-NO-SQL/
 https://ymurong.com/2023/03/26/Data-Quality-What-Why-How/
 https://ymurong.com/about/about.html
 https://ymurong.com/2023/03/11/pytorch-tricky-api/
@@ -29,7 +29,6 @@ https://ymurong.com/404.html
 https://ymurong.com/
 https://ymurong.com/tags/data-transmission/
 https://ymurong.com/tags/data-engineering/
-https://ymurong.com/tags/database/
 https://ymurong.com/tags/javascript/
 https://ymurong.com/tags/css/
 https://ymurong.com/tags/graphql/
