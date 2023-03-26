@@ -1,3 +1,4 @@
+https://ymurong.com/2023/03/26/Data-Quality-What-Why-How/
 https://ymurong.com/about/about.html
 https://ymurong.com/2022/07/16/SQL-vs-NO-SQL/
 https://ymurong.com/2023/03/11/pytorch-tricky-api/
