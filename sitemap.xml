@@ -191,7 +191,7 @@
   </url>
   
   <url>
-    <loc>https://ymurong.com/2019/09/22/interesting-facts-about-scala/</loc>
+    <loc>https://ymurong.com/2021/11/04/graphql-basics/</loc>
     
     <lastmod>2022-08-04</lastmod>
     
@@ -200,7 +200,7 @@
   </url>
   
   <url>
-    <loc>https://ymurong.com/2021/11/04/graphql-basics/</loc>
+    <loc>https://ymurong.com/2019/09/22/interesting-facts-about-scala/</loc>
     
     <lastmod>2022-08-04</lastmod>
     
@@ -227,7 +227,7 @@
   </url>
   
   <url>
-    <loc>https://ymurong.com/2021/09/28/css-grids-and-flexbox-for-responsive-web-design-notes/</loc>
+    <loc>https://ymurong.com/2021/11/23/functional-light-javascript/</loc>
     
     <lastmod>2022-08-04</lastmod>
     
@@ -236,7 +236,7 @@
   </url>
   
   <url>
-    <loc>https://ymurong.com/2021/11/23/functional-light-javascript/</loc>
+    <loc>https://ymurong.com/2021/09/28/css-grids-and-flexbox-for-responsive-web-design-notes/</loc>
     
     <lastmod>2022-08-04</lastmod>
     
@@ -277,13 +277,6 @@
   </url>
   
   <url>
-    <loc>https://ymurong.com/tags/css/</loc>
-    <lastmod>2023-03-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://ymurong.com/tags/javascript/</loc>
     <lastmod>2023-03-26</lastmod>
     <changefreq>weekly</changefreq>
@@ -291,14 +284,21 @@
   </url>
   
   <url>
-    <loc>https://ymurong.com/tags/scala/</loc>
+    <loc>https://ymurong.com/tags/graphql/</loc>
     <lastmod>2023-03-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://ymurong.com/tags/graphql/</loc>
+    <loc>https://ymurong.com/tags/css/</loc>
+    <lastmod>2023-03-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://ymurong.com/tags/scala/</loc>
     <lastmod>2023-03-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -326,6 +326,13 @@
   </url>
   
   <url>
+    <loc>https://ymurong.com/tags/python/</loc>
+    <lastmod>2023-03-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://ymurong.com/tags/spark/</loc>
     <lastmod>2023-03-26</lastmod>
     <changefreq>weekly</changefreq>
@@ -341,13 +348,6 @@
   
   <url>
     <loc>https://ymurong.com/tags/performance/</loc>
-    <lastmod>2023-03-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ymurong.com/tags/python/</loc>
     <lastmod>2023-03-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
