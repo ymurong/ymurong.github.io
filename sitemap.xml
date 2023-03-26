@@ -2,6 +2,24 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://ymurong.com/2019/08/14/spark-core-rdd/</loc>
+    
+    <lastmod>2023-03-26</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://ymurong.com/2019/08/15/spark-core-intro/</loc>
+    
+    <lastmod>2023-03-26</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://ymurong.com/2021/10/30/web-performance-fundamentals/</loc>
     
     <lastmod>2023-03-26</lastmod>
@@ -21,15 +39,6 @@
   
   <url>
     <loc>https://ymurong.com/2020/10/14/machine-learning-with-python1-linear-regression/</loc>
-    
-    <lastmod>2023-03-26</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://ymurong.com/2019/08/15/spark-core-intro/</loc>
     
     <lastmod>2023-03-26</lastmod>
     
@@ -182,15 +191,6 @@
   </url>
   
   <url>
-    <loc>https://ymurong.com/2019/08/14/spark-core-rdd/</loc>
-    
-    <lastmod>2022-08-04</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://ymurong.com/2021/11/04/graphql-basics/</loc>
     
     <lastmod>2022-08-04</lastmod>
@@ -334,13 +334,6 @@
   
   <url>
     <loc>https://ymurong.com/tags/python/</loc>
-    <lastmod>2023-03-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://ymurong.com/tags/spark/</loc>
     <lastmod>2023-03-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
